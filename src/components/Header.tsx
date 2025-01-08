@@ -10,7 +10,6 @@ const DEV =
   window.location.hostname === "127.0.0.1";
 
 export const Header: React.FC = () => {
-  const navigate = useNavigate();
 
   if (DEV && !BUTTONS.includes(BUTTONS_DEV[0])) {
     BUTTONS_DEV.forEach((button: string) => {
