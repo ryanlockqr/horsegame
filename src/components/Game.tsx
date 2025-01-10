@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Horse } from "../types/GameTypes";
 import "../styles/Game.css";
 import backgroundImage from "../assets/images/background.png"; // Background image import
 
@@ -11,28 +10,21 @@ const HORSE_HEIGHT = 40;
 export const Game: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [horse, setHorse] = useState<Horse>({
-    position: { x: 50, y: GAME_HEIGHT - HORSE_HEIGHT - 10 },
+  // Horse state
+  const [horse, setHorse] = useState({
+    position: { x: 50 }, // Horizontal position only
     speed: 5,
-    baseSpeed: 5,
-    isJumping: false,
-    effects: {
-      speedBoost: 0,
-      shield: false,
-    },
   });
 
-  const backgroundXRef = useRef(0); // Ref for tracking background position
+  // Refs for animation
+  const backgroundXRef = useRef(0); // Background position
+  const horseYRef = useRef(GAME_HEIGHT - HORSE_HEIGHT - 10); // Horse's vertical position
+  const isJumpingRef = useRef(false); // Track if the horse is mid-jump
 
+  // Keypress handler
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       switch (e.key) {
-        case "ArrowRight":
-          moveHorse("right");
-          break;
-        case "ArrowLeft":
-          moveHorse("left");
-          break;
         case "Space":
         case " ":
           jump();
@@ -44,67 +36,29 @@ export const Game: React.FC = () => {
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, []);
 
-  const moveHorse = (direction: "left" | "right") => {
-    setHorse((prev) => {
-      const newX =
-        direction === "right"
-          ? Math.min(prev.position.x + prev.speed, GAME_WIDTH - HORSE_WIDTH)
-          : Math.max(prev.position.x - prev.speed, 0);
-
-      return {
-        ...prev,
-        position: {
-          ...prev.position,
-          x: newX,
-        },
-      };
-    });
-  };
-
+  // Jump logic
   const jump = () => {
-    if (!horse.isJumping) {
-      setHorse((prev) => ({ ...prev, isJumping: true }));
-      const jumpHeight = 100;
-      const jumpDuration = 500;
+    if (isJumpingRef.current) return; // Prevent multiple jumps
+    isJumpingRef.current = true;
 
-      // Jump up
-      const originalY = horse.position.y;
-      const jumpUp = setInterval(() => {
-        setHorse((prev) => ({
-          ...prev,
-          position: {
-            ...prev.position,
-            y: Math.max(prev.position.y - 5, originalY - jumpHeight),
-          },
-        }));
-      }, 20);
+    const originalY = GAME_HEIGHT - HORSE_HEIGHT - 10; // Ground position
+    let velocity = -9; // Initial upward velocity
+    const gravity = 0.5; // Gravity pulling down
 
-      // Return to ground
-      setTimeout(() => {
-        clearInterval(jumpUp);
-        const fallDown = setInterval(() => {
-          setHorse((prev) => {
-            const newY = Math.min(
-              prev.position.y + 5,
-              GAME_HEIGHT - HORSE_HEIGHT - 10
-            );
-            if (newY === GAME_HEIGHT - HORSE_HEIGHT - 10) {
-              clearInterval(fallDown);
-              setHorse((p) => ({ ...p, isJumping: false }));
-            }
-            return {
-              ...prev,
-              position: {
-                ...prev.position,
-                y: newY,
-              },
-            };
-          });
-        }, 20);
-      }, jumpDuration / 2);
-    }
+    const jumpInterval = setInterval(() => {
+      horseYRef.current += velocity;
+      velocity += gravity;
+
+      // Stop jumping when back on the ground
+      if (horseYRef.current >= originalY) {
+        horseYRef.current = originalY; // Reset to ground
+        clearInterval(jumpInterval);
+        isJumpingRef.current = false;
+      }
+    }, 20);
   };
 
+  // Game loop
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
@@ -117,13 +71,13 @@ export const Game: React.FC = () => {
         // Clear the canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Update background position (ref-based)
-        backgroundXRef.current -= 2;
+        // Update background position
+        backgroundXRef.current -= 3;
         if (backgroundXRef.current <= -GAME_WIDTH) {
-          backgroundXRef.current = 0; // Reset position when fully off-screen
+          backgroundXRef.current = 0; // Reset when off-screen
         }
 
-        // Draw the background (seamless scrolling effect)
+        // Draw the background
         ctx.drawImage(
           background,
           backgroundXRef.current,
@@ -143,7 +97,7 @@ export const Game: React.FC = () => {
         ctx.fillStyle = "blue";
         ctx.fillRect(
           horse.position.x,
-          horse.position.y,
+          horseYRef.current, // Use ref-based y position
           HORSE_WIDTH,
           HORSE_HEIGHT
         );
@@ -155,8 +109,8 @@ export const Game: React.FC = () => {
 
     const animationId = requestAnimationFrame(gameLoop);
 
-    return () => cancelAnimationFrame(animationId); // Clean up
-  }, [horse]);
+    return () => cancelAnimationFrame(animationId); // Clean up on unmount
+  }, []); // Empty dependency array to ensure one-time setup
 
   return (
     <div className="game-container">
