@@ -1,8 +1,7 @@
-// src/components/Game.tsx
 import React, { useEffect, useRef, useState } from "react";
-import { Horse, Item, Position } from "../types/GameTypes";
-import { generateRandomItem } from "../utils/gameUtils";
+import { Horse } from "../types/GameTypes";
 import "../styles/Game.css";
+import backgroundImage from "../assets/images/background.png"; // Background image import
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 400;
@@ -11,6 +10,7 @@ const HORSE_HEIGHT = 40;
 
 export const Game: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
   const [horse, setHorse] = useState<Horse>({
     position: { x: 50, y: GAME_HEIGHT - HORSE_HEIGHT - 10 },
     speed: 5,
@@ -21,9 +21,8 @@ export const Game: React.FC = () => {
       shield: false,
     },
   });
-  const [items, setItems] = useState<Item[]>([]);
-  const [gameLoop, setGameLoop] = useState<number | null>(null);
-  const [score, setScore] = useState(0);
+
+  const backgroundXRef = useRef(0); // Ref for tracking background position
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -87,7 +86,7 @@ export const Game: React.FC = () => {
           setHorse((prev) => {
             const newY = Math.min(
               prev.position.y + 5,
-              GAME_HEIGHT - HORSE_HEIGHT - 10,
+              GAME_HEIGHT - HORSE_HEIGHT - 10
             );
             if (newY === GAME_HEIGHT - HORSE_HEIGHT - 10) {
               clearInterval(fallDown);
@@ -106,79 +105,61 @@ export const Game: React.FC = () => {
     }
   };
 
-  const spawnItem = () => {
-    if (Math.random() < 0.02) {
-      // 2% chance each frame
-      const newItem = generateRandomItem(GAME_WIDTH, GAME_HEIGHT);
-      setItems((prev) => [...prev, newItem]);
-    }
-  };
-
-  const checkItemCollision = () => {
-    setItems((prevItems) => {
-      return prevItems.filter((item) => {
-        const collision =
-          Math.abs(item.position.x - horse.position.x) < HORSE_WIDTH &&
-          Math.abs(item.position.y - horse.position.y) < HORSE_HEIGHT;
-
-        if (collision) {
-          applyItemEffect(item);
-          return false;
-        }
-        return true;
-      });
-    });
-  };
-
-  const applyItemEffect = (item: Item) => {
-    setHorse((prev) => {
-      switch (item.type) {
-        case "speed_boost":
-          return {
-            ...prev,
-            speed: prev.baseSpeed * 1.5,
-            effects: { ...prev.effects, speedBoost: 3000 },
-          };
-        case "shield":
-          return {
-            ...prev,
-            effects: { ...prev.effects, shield: true },
-          };
-        default:
-          return prev;
-      }
-    });
-
-    if (item.type === "speed_boost") {
-      setTimeout(() => {
-        setHorse((prev) => ({
-          ...prev,
-          speed: prev.baseSpeed,
-          effects: { ...prev.effects, speedBoost: 0 },
-        }));
-      }, 3000);
-    }
-  };
-
   useEffect(() => {
-    /*
-    const loop = setInterval(() => {
-      spawnItem();
-      checkItemCollision();
-      setScore((prev) => prev + 1);
-    }, 1000 / 60);
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
 
-    //setGameLoop(loop)
-    return () => clearInterval(loop);*/
-  }, []);
+    const background = new Image();
+    background.src = backgroundImage;
+
+    const gameLoop = () => {
+      if (ctx && canvas) {
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Update background position (ref-based)
+        backgroundXRef.current -= 2;
+        if (backgroundXRef.current <= -GAME_WIDTH) {
+          backgroundXRef.current = 0; // Reset position when fully off-screen
+        }
+
+        // Draw the background (seamless scrolling effect)
+        ctx.drawImage(
+          background,
+          backgroundXRef.current,
+          0,
+          GAME_WIDTH,
+          GAME_HEIGHT
+        );
+        ctx.drawImage(
+          background,
+          backgroundXRef.current + GAME_WIDTH,
+          0,
+          GAME_WIDTH,
+          GAME_HEIGHT
+        );
+
+        // Draw the horse
+        ctx.fillStyle = "blue";
+        ctx.fillRect(
+          horse.position.x,
+          horse.position.y,
+          HORSE_WIDTH,
+          HORSE_HEIGHT
+        );
+      }
+
+      // Request the next frame
+      requestAnimationFrame(gameLoop);
+    };
+
+    const animationId = requestAnimationFrame(gameLoop);
+
+    return () => cancelAnimationFrame(animationId); // Clean up
+  }, [horse]);
 
   return (
     <div className="game-container">
-      <div className="game-stats">
-        <span>Score: {score}</span>
-        {horse.effects.speedBoost > 0 && <span>Speed Boost Active!</span>}
-        {horse.effects.shield && <span>Shield Active!</span>}
-      </div>
       <canvas
         ref={canvasRef}
         width={GAME_WIDTH}
