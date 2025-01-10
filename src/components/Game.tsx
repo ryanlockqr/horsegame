@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../styles/Game.css";
 import backgroundImage from "../assets/images/background.png"; // Background image import
+import horseImageNormal from "../assets/images/normal.png"; // Replace with your actual file path
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 400;
-const HORSE_WIDTH = 60;
-const HORSE_HEIGHT = 40;
+const HORSE_WIDTH = 120;
+const HORSE_HEIGHT = 80;
 
 export const Game: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -66,6 +67,9 @@ export const Game: React.FC = () => {
     const background = new Image();
     background.src = backgroundImage;
 
+    const horseImage = new Image();
+    horseImage.src = horseImageNormal;
+
     const gameLoop = () => {
       if (ctx && canvas) {
         // Clear the canvas
@@ -85,6 +89,7 @@ export const Game: React.FC = () => {
           GAME_WIDTH,
           GAME_HEIGHT
         );
+
         ctx.drawImage(
           background,
           backgroundXRef.current + GAME_WIDTH,
@@ -94,8 +99,8 @@ export const Game: React.FC = () => {
         );
 
         // Draw the horse
-        ctx.fillStyle = "blue";
-        ctx.fillRect(
+        ctx.drawImage(
+          horseImage,
           horse.position.x,
           horseYRef.current, // Use ref-based y position
           HORSE_WIDTH,
