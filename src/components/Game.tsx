@@ -44,7 +44,7 @@ export const Game: React.FC = () => {
 
     const originalY = GAME_HEIGHT - HORSE_HEIGHT - 10; // Ground position
     let velocity = -9; // Initial upward velocity
-    const gravity = 0.5; // Gravity pulling down
+    const gravity = 0.6; // Gravity pulling down
 
     const jumpInterval = setInterval(() => {
       horseYRef.current += velocity;
