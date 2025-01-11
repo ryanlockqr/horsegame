@@ -46,7 +46,7 @@ export default function App() {
       const skinUrls = await Promise.all(
         result.map(async (skin) => {
           const linkToStorageFile = await getUrl({
-            path: `skins/${skin.key}`, // Adjust path to match object key
+            path: skin.key,
           });
           console.log(linkToStorageFile);
           return linkToStorageFile;
