@@ -9,14 +9,8 @@ const HorseImagePage = () => {
   };
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>Horse Image</h1>
       <StorageImage alt="horse" path="skins/horse.jpg" style={{ maxWidth: '100%', height: 'auto' }} 
       />
-      <div>
-        <button onClick={handleNavigate}>Go to the Next Page</button>
-      </div>
-    </div>
   );
 };
 
