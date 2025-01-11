@@ -17,6 +17,7 @@ import { getUrl } from "aws-amplify/storage";
 import { uploadData } from "aws-amplify/storage";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
+import { aws_amplify } from "aws-cdk-lib";
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
  */
@@ -71,6 +72,7 @@ export default function App() {
     fetchNotes();
     event.target.reset();
   }
+
 
   return (
     <Authenticator>
@@ -162,7 +164,7 @@ export default function App() {
                 className="box"
               >
                 <Image
-                    src={skin}
+                    src={'skins/horse.jpg'}
                     alt={`visual aid`}
                     style={{ width: 400 }}
                   />
