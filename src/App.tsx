@@ -1,14 +1,18 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
+import reactLogo from './assets/react.svg';
+import viteLogo from '/vite.svg';
+import './App.css';
 import { useAuthenticator } from '@aws-amplify/ui-react';
+import { uploadHorseImages } from './services/s3Service'; // Import the upload function
 
 function App() {
-
   const { signOut } = useAuthenticator();
+  const [count, setCount] = useState(0);
 
-  const [count, setCount] = useState(0)
+  // Trigger the upload when the component mounts (e.g., when the App starts)
+  useEffect(() => {
+    uploadHorseImages();
+  }, []);
 
   return (
     <main>
@@ -34,7 +38,7 @@ function App() {
       </p>
       <button onClick={signOut}>Sign out</button>
     </main>
-  )
+  );
 }
 
-export default App
+export default App;
