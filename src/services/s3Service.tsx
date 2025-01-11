@@ -11,11 +11,7 @@ const s3Client = new S3Client({
 
 // List of horse images to upload
 const horseImages = [
-  { name: 'horse1.jpg', filePath: '/path_to_images/horse1.jpg' },
-  { name: 'horse2.jpg', filePath: '/path_to_images/horse2.jpg' },
-  { name: 'horse3.jpg', filePath: '/path_to_images/horse3.jpg' },
-  { name: 'horse4.jpg', filePath: '/path_to_images/horse4.jpg' },
-  { name: 'horse5.jpg', filePath: '/path_to_images/horse5.jpg' },
+  { name: 'horse.jpg', filePath: '/images/horse.jpg' },
 ];
 
 // Function to upload horse images to S3
