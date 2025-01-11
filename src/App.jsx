@@ -144,6 +144,7 @@ export default function App() {
             ))}
           </Grid>
           <Heading level={2}>Available Skins</Heading>
+          <StorageImage alt="horse" path="skins/horse.jpg" />
           <Grid
             margin="3rem 0"
             autoFlow="column"
