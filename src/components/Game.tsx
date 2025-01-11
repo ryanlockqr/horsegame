@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "../styles/Game.css";
 import backgroundImage from "../assets/images/background.png"; // Background image import
 import horseImageNormal from "../assets/images/normal.png"; // Replace with your actual file path
+import horseImageJump from "../assets/images/jumping.png"; 
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 400;
@@ -67,8 +68,11 @@ export const Game: React.FC = () => {
     const background = new Image();
     background.src = backgroundImage;
 
-    const horseImage = new Image();
-    horseImage.src = horseImageNormal;
+    const horseImageNormalSprite = new Image();
+    horseImageNormalSprite.src = horseImageNormal;
+
+    const horseImageJumpSprite = new Image();
+    horseImageJumpSprite.src = horseImageJump;
 
     const gameLoop = () => {
       if (ctx && canvas) {
@@ -100,7 +104,8 @@ export const Game: React.FC = () => {
 
         // Draw the horse
         ctx.drawImage(
-          horseImage,
+          isJumpingRef.current ? horseImageJumpSprite : horseImageNormalSprite,
+
           horse.position.x,
           horseYRef.current, // Use ref-based y position
           HORSE_WIDTH,
