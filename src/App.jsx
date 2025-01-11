@@ -23,6 +23,10 @@ import { StorageImage } from '@aws-amplify/ui-react-storage';
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
  */
 
+const paths = [
+  "horse.jpg",
+];
+
 Amplify.configure(outputs);
 const client = generateClient({
   authMode: "userPool",
@@ -34,6 +38,8 @@ export default function App() {
 
   useEffect(() => {
     fetchNotes();
+    const urls = paths.map((path) => `skins/${path}`);
+    setSkins(urls);
   }, []);
 
   async function fetchNotes() {
@@ -144,7 +150,19 @@ export default function App() {
             ))}
           </Grid>
           <Heading level={2}>Available Skins</Heading>
-        
+          <Grid
+            margin="3rem 0"
+            autoFlow="column"
+            justifyContent="center"
+            gap="2rem"
+            alignContent="center"
+          >
+            {skinUrls.map((url, index) => (
+              <View key={index} width="200px" height="200px" border="1px solid #ccc" padding="1rem">
+                <Image src={url} alt={`Skin ${index}`} width="100%" height="100%" />
+              </View>
+            ))}
+          </Grid>
           <Button onClick={signOut}>Sign Out</Button>
         </Flex>
       )}
