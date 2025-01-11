@@ -28,15 +28,15 @@
   "data": {
     "url": "https://3y7mscdgifcwfdckrs436wjqja.appsync-api.us-east-1.amazonaws.com/graphql",
     "aws_region": "us-east-1",
-    "default_authorization_type": "AWS_IAM",
+    "default_authorization_type": "AMAZON_COGNITO_USER_POOLS",
     "authorization_types": [
-      "AMAZON_COGNITO_USER_POOLS"
+      "AWS_IAM"
     ],
     "model_introspection": {
       "version": 1,
       "models": {
-        "Todo": {
-          "name": "Todo",
+        "Note": {
+          "name": "Note",
           "fields": {
             "id": {
               "name": "id",
@@ -45,17 +45,24 @@
               "isRequired": true,
               "attributes": []
             },
-            "content": {
-              "name": "content",
+            "name": {
+              "name": "name",
               "isArray": false,
               "type": "String",
               "isRequired": false,
               "attributes": []
             },
-            "highscore": {
-              "name": "highscore",
+            "description": {
+              "name": "description",
               "isArray": false,
-              "type": "Int",
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "image": {
+              "name": "image",
+              "isArray": false,
+              "type": "String",
               "isRequired": false,
               "attributes": []
             },
@@ -77,7 +84,7 @@
             }
           },
           "syncable": true,
-          "pluralName": "Todos",
+          "pluralName": "Notes",
           "attributes": [
             {
               "type": "model",
@@ -88,8 +95,10 @@
               "properties": {
                 "rules": [
                   {
-                    "allow": "public",
-                    "provider": "iam",
+                    "provider": "userPools",
+                    "ownerField": "owner",
+                    "allow": "owner",
+                    "identityClaim": "cognito:username",
                     "operations": [
                       "create",
                       "update",
@@ -114,17 +123,19 @@
   },
   "storage": {
     "aws_region": "us-east-1",
-    "bucket_name": "amplify-horsegame-ryanloc-horseskinsbucketdfb89530-etgqvouaz2gh",
+    "bucket_name": "amplify-horsegame-ryanloc-amplifynotesdrivebucket1-m9o7c5xssab8",
     "buckets": [
       {
-        "name": "horseSkins",
-        "bucket_name": "amplify-horsegame-ryanloc-horseskinsbucketdfb89530-etgqvouaz2gh",
+        "name": "amplifyNotesDrive",
+        "bucket_name": "amplify-horsegame-ryanloc-amplifynotesdrivebucket1-m9o7c5xssab8",
         "aws_region": "us-east-1",
         "paths": {
-          "skins/*": {
-            "guest": [
+          "media/${cognito-identity.amazonaws.com:sub}/*": {
+            "entityidentity": [
               "get",
-              "list"
+              "list",
+              "write",
+              "delete"
             ]
           }
         }
