@@ -1,12 +1,23 @@
-import { horseImage } from "./horseImages";
+import { useNavigate } from 'react-router-dom';
+import { StorageImage } from '@aws-amplify/ui-react-storage';
 
 const HorseImagePage = () => {
-    return (
-      <div style={{ textAlign: 'center', marginTop: '50px' }}>
-        <h1>Horse Image</h1>
-        {horseImage()}
-      </div>
-    );
+  const navigate = useNavigate();  // Initialize the navigate function
+
+  const handleNavigate = () => {
+    navigate('/other');  // Navigate to the '/other' route when the button is clicked
   };
-  
-  export default HorseImagePage;
+
+  return (
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+      <h1>Horse Image</h1>
+      <StorageImage alt="horse" path="horseSkins/horse.jpg" 
+      />
+      <div>
+        <button onClick={handleNavigate}>Go to the Next Page</button>
+      </div>
+    </div>
+  );
+};
+
+export default HorseImagePage;
