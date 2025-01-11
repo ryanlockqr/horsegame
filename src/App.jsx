@@ -13,17 +13,14 @@ import {
 } from "@aws-amplify/ui-react";
 import { Amplify } from "aws-amplify";
 import "@aws-amplify/ui-react/styles.css";
-import { getUrl } from "aws-amplify/storage";
-import { uploadData } from "aws-amplify/storage";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
+import { uploadData, getUrl } from "aws-amplify/storage";
+import { fetchUserAttributes } from 'aws-amplify/auth';
+
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
  */
-
-const paths = [
-  "horse.jpg",
-];
 
 Amplify.configure(outputs);
 const client = generateClient({
@@ -32,53 +29,101 @@ const client = generateClient({
 
 export default function App() {
   const [notes, setNotes] = useState([]);
-  const [skinUrls, setSkins] = useState([]);
 
   useEffect(() => {
     fetchNotes();
-    fetchSkins();
   }, []);
 
   async function fetchNotes() {
     const { data: notes } = await client.models.Note.list();
     await Promise.all(
       notes.map(async (note) => {
-        /*
         if (note.image) {
           const linkToStorageFile = await getUrl({
-            path: ({ identityId }) => `media/${identityId}/${note.image}`,
+            path: ({ identityId }) => `profile_pictures/${identityId}/profile_pic.jpg`,
           });
           console.log(linkToStorageFile.url);
           note.image = linkToStorageFile.url;
         }
-          */ 
         return note;
       })
     );
     console.log(notes);
     setNotes(notes);
   }
-  
-
-  async function fetchSkins() {
-      const urls = paths.map((path) => `skins/${path}`);
-      setSkins(urls);
-  }
-  
 
   async function createNote(event) {
     event.preventDefault();
+    storeHighscore(10);
+    /*
     const form = new FormData(event.target);
+    console.log(form.get("image").name);
 
     const { data: newNote } = await client.models.Note.create({
       name: form.get("name"),
       description: form.get("description"),
+      image: form.get("image").name,
     });
 
     console.log(newNote);
+    if (newNote.image)
+      if (newNote.image)
+        await uploadData({
+          path: ({ identityId }) => `media/${identityId}/${newNote.image}`,
 
+          data: form.get("image"),
+        }).result;
+*/
     fetchNotes();
     event.target.reset();
+  }
+
+  async function uploadProfilePicture(event) {
+    event.preventDefault();
+    const form = new FormData(event.target);
+    const file = form.get("profilePicture");
+  
+    if (!file) {
+      alert("Please select an image file.");
+      return;
+    }
+  
+    try {
+      // Upload the image to S3
+      uploadData({
+        path: ({ identityId }) => `profile_pictures/${identityId}/profile_pic.jpg`,
+        data: file,
+      });
+  
+      alert("Profile picture uploaded successfully!");
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+      alert("Error uploading profile picture. Please try again.");
+    }
+  }  
+  
+  async function storeHighscore(highscore) {
+    try {
+      // Fetch current user attributes
+      const userAttributes = await fetchUserAttributes();
+      const email = userAttributes.email; // Access email attribute
+  
+      // Fetch profile picture URL from storage
+      const profilePicUrl = await getUrl({
+        path: ({ identityId }) => `profile_pictures/${identityId}/profile_pic.jpg`,
+      });
+  
+      // Store highscore in the database
+      const { data: newHighscore } = await client.models.Note.create({
+        name: email,  // Storing email as username
+        description: highscore,
+        image: profilePicUrl,
+      });
+  
+      console.log("Highscore stored successfully:", newHighscore);
+    } catch (error) {
+      console.error("Error storing highscore:", error);
+    }
   }
 
   return (
@@ -116,6 +161,13 @@ export default function App() {
                 variation="quiet"
                 required
               />
+              <View
+                name="image"
+                as="input"
+                type="file"
+                alignSelf={"end"}
+                accept="image/png, image/jpeg"
+              />
 
               <Button type="submit" variation="primary">
                 Create Note
@@ -147,23 +199,26 @@ export default function App() {
                   <Heading level="3">{note.name}</Heading>
                 </View>
                 <Text fontStyle="italic">{note.description}</Text>
+                {note.image && (
+                  <Image
+                    src={note.image}
+                    alt={`visual aid for ${notes.name}`}
+                    style={{ width: 400 }}
+                  />
+                )}
               </Flex>
             ))}
           </Grid>
-          <Heading level={2}>Available Skins</Heading>
-          <Grid
-            margin="3rem 0"
-            autoFlow="column"
-            justifyContent="center"
-            gap="2rem"
-            alignContent="center"
-          >
-            {skinUrls.map((url, index) => (
-              <View key={index} width="200px" height="200px" border="1px solid #ccc" padding="1rem">
-                <Image src={url} alt={`Skin ${index}`} width="100%" height="100%" />
-              </View>
-            ))}
-          </Grid>
+          <View as="form" onSubmit={uploadProfilePicture}>
+            <TextField
+              label="Upload Profile Picture"
+              name="profilePicture"
+              type="file"
+              accept="image/png, image/jpeg"
+            />
+            <Button type="submit">Upload</Button>
+          </View>
+
           <Button onClick={signOut}>Sign Out</Button>
         </Flex>
       )}

@@ -11,9 +11,10 @@ const schema = a.schema({
   Note: a
     .model({
       name:a.string(),
-      description: a.integer(),
+      description: a.string(),
+      image: a.string(),
     })
-    .authorization((allow) => [allow.guest()]),
+    .authorization((allow) => [allow.owner()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
