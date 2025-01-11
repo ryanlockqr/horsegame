@@ -17,8 +17,6 @@ import { getUrl } from "aws-amplify/storage";
 import { uploadData } from "aws-amplify/storage";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
-import { aws_amplify } from "aws-cdk-lib";
-import { StorageImage } from '@aws-amplify/ui-react-storage';
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
  */
