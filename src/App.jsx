@@ -55,34 +55,13 @@ export default function App() {
   async function createNote(event) {
     event.preventDefault();
     storeHighscore(10);
-    /*
-    const form = new FormData(event.target);
-    console.log(form.get("image").name);
-
-    const { data: newNote } = await client.models.Note.create({
-      name: form.get("name"),
-      description: form.get("description"),
-      image: form.get("image").name,
-    });
-
-    console.log(newNote);
-    if (newNote.image)
-      if (newNote.image)
-        await uploadData({
-          path: ({ identityId }) => `media/${identityId}/${newNote.image}`,
-
-          data: form.get("image"),
-        }).result;
-*/
     fetchNotes();
-    event.target.reset();
   }
 
   async function uploadProfilePicture(event) {
     event.preventDefault();
     const form = new FormData(event.target);
     const file = form.get("profilePicture");
-  
     if (!file) {
       alert("Please select an image file.");
       return;
@@ -145,32 +124,8 @@ export default function App() {
               gap="2rem"
               padding="2rem"
             >
-              <TextField
-                name="name"
-                placeholder="Note Name"
-                label="Note Name"
-                labelHidden
-                variation="quiet"
-                required
-              />
-              <TextField
-                name="description"
-                placeholder="Note Description"
-                label="Note Description"
-                labelHidden
-                variation="quiet"
-                required
-              />
-              <View
-                name="image"
-                as="input"
-                type="file"
-                alignSelf={"end"}
-                accept="image/png, image/jpeg"
-              />
-
               <Button type="submit" variation="primary">
-                Create Note
+                Add HighScore
               </Button>
             </Flex>
           </View>
@@ -202,7 +157,7 @@ export default function App() {
                 {note.image && (
                   <Image
                     src={note.image}
-                    alt={`visual aid for ${notes.name}`}
+                    alt={`visual`}
                     style={{ width: 400 }}
                   />
                 )}
