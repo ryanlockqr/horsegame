@@ -105,26 +105,9 @@
       "nonModels": {}
     }
   },
+  "version": "1.3",
   "storage": {
     "aws_region": "us-east-1",
-    "bucket_name": "amplify-horsegame-ryanloc-amplifynotesdrivebucket1-8kl2rqi2u7qt",
-    "buckets": [
-      {
-        "name": "amplifyNotesDrive",
-        "bucket_name": "amplify-horsegame-ryanloc-amplifynotesdrivebucket1-8kl2rqi2u7qt",
-        "aws_region": "us-east-1",
-        "paths": {
-          "media/${cognito-identity.amazonaws.com:sub}/*": {
-            "entityidentity": [
-              "get",
-              "list",
-              "write",
-              "delete"
-            ]
-          }
-        }
-      }
-    ]
-  },
-  "version": "1.3"
+    "bucket_name": "horseskins"
+  }
 }

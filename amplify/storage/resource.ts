@@ -1,10 +1,10 @@
 import { defineStorage } from "@aws-amplify/backend";
 
 export const storage = defineStorage({
-  name: "amplifyNotesDrive",
+  name: 'horseSkins',  // Define the bucket name here
   access: (allow) => ({
-    "media/{entity_id}/*": [
-      allow.entity("identity").to(["read", "write", "delete"]),
+    'horseSkins/*': [
+      allow.guest.to(['read']), // Allow guests to read horse images
     ],
   }),
 });
