@@ -28,7 +28,7 @@ const client = generateClient({
 
 export default function App() {
   const [notes, setNotes] = useState([]);
-  const [skins, setSkins] = useState([]);
+  const [skinUrls, setSkins] = useState([]);
 
   useEffect(() => {
     fetchNotes();
@@ -37,20 +37,6 @@ export default function App() {
 
   async function fetchNotes() {
     const { data: notes } = await client.models.Note.list();
-    await Promise.all(
-      notes.map(async (note) => {
-        /*
-        if (note.image) {
-          const linkToStorageFile = await getUrl({
-            path: ({ identityId }) => `media/${identityId}/${note.image}`,
-          });
-          console.log(linkToStorageFile.url);
-          note.image = linkToStorageFile.url;
-        }
-          */ 
-        return note;
-      })
-    );
     console.log(notes);
     setNotes(notes);
   }
@@ -60,10 +46,10 @@ export default function App() {
       const skinUrls = await Promise.all(
         result.map(async (skin) => {
           const linkToStorageFile = await getUrl({
-            path: ({ identityId }) => `skins/${skin.key}`, // Adjust path to match object key
+            path: `skins/${skin.key}`, // Adjust path to match object key
           });
-          console.log(linkToStorageFile.url);
-          return linkToStorageFile.url;
+          console.log(linkToStorageFile);
+          return linkToStorageFile;
         })
       );
       console.log(skinUrls);
@@ -163,9 +149,9 @@ export default function App() {
             gap="2rem"
             alignContent="center"
           >
-            {skins.map((skin) => (
+            {skinUrls.map((skin) => (
               <Flex
-                key={note.id || note.name}
+                key={skin}
                 direction="column"
                 justifyContent="center"
                 alignItems="center"
