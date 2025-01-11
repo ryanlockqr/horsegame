@@ -13,7 +13,7 @@ const schema = a.schema({
       name:a.string(),
       description: a.integer(),
     })
-    .authorization((allow) => [allow.owner()]),
+    .authorization((allow) => [allow.guest()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;

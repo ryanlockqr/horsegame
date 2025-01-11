@@ -18,6 +18,7 @@ import { uploadData } from "aws-amplify/storage";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
 import { aws_amplify } from "aws-cdk-lib";
+import { StorageImage } from '@aws-amplify/ui-react-storage';
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
  */
@@ -165,7 +166,7 @@ export default function App() {
                 className="box"
               >
                 <Image
-                    src={'skins/horse.jpg'}
+                    src={skin}
                     alt={`visual aid`}
                     style={{ width: 400 }}
                   />
