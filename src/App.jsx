@@ -36,29 +36,33 @@ export default function App() {
 
   useEffect(() => {
     fetchNotes();
-    const urls = paths.map((path) => `skins/${path}`);
-    setSkins(urls);
+    fetchSkins();
   }, []);
 
   async function fetchNotes() {
     const { data: notes } = await client.models.Note.list();
+    await Promise.all(
+      notes.map(async (note) => {
+        /*
+        if (note.image) {
+          const linkToStorageFile = await getUrl({
+            path: ({ identityId }) => `media/${identityId}/${note.image}`,
+          });
+          console.log(linkToStorageFile.url);
+          note.image = linkToStorageFile.url;
+        }
+          */ 
+        return note;
+      })
+    );
     console.log(notes);
     setNotes(notes);
   }
+  
 
   async function fetchSkins() {
-      const result = await Storage.list("skins/"); // List objects under 'skins/' folder
-      const skinUrls = await Promise.all(
-        result.map(async (skin) => {
-          const linkToStorageFile = await getUrl({
-            path: skin.key,
-          });
-          console.log(linkToStorageFile);
-          return linkToStorageFile;
-        })
-      );
-      console.log(skinUrls);
-      setSkins(skinUrls);
+      const urls = paths.map((path) => `skins/${path}`);
+      setSkins(urls);
   }
   
 
@@ -76,7 +80,6 @@ export default function App() {
     fetchNotes();
     event.target.reset();
   }
-
 
   return (
     <Authenticator>
