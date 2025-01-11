@@ -11,8 +11,7 @@ const schema = a.schema({
   Note: a
     .model({
       name:a.string(),
-      description: a.string(),
-      image: a.string(),
+      description: a.integer(),
     })
     .authorization((allow) => [allow.owner()]),
 });

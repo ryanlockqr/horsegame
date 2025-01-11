@@ -55,14 +55,7 @@
             "description": {
               "name": "description",
               "isArray": false,
-              "type": "String",
-              "isRequired": false,
-              "attributes": []
-            },
-            "image": {
-              "name": "image",
-              "isArray": false,
-              "type": "String",
+              "type": "Int",
               "isRequired": false,
               "attributes": []
             },
@@ -123,19 +116,17 @@
   },
   "storage": {
     "aws_region": "us-east-1",
-    "bucket_name": "amplify-horsegame-ryanloc-amplifynotesdrivebucket1-m9o7c5xssab8",
+    "bucket_name": "amplify-horsegame-ryanloc-horseskinsbucketdfb89530-od51zzc7snpk",
     "buckets": [
       {
-        "name": "amplifyNotesDrive",
-        "bucket_name": "amplify-horsegame-ryanloc-amplifynotesdrivebucket1-m9o7c5xssab8",
+        "name": "horseSkins",
+        "bucket_name": "amplify-horsegame-ryanloc-horseskinsbucketdfb89530-od51zzc7snpk",
         "aws_region": "us-east-1",
         "paths": {
-          "media/${cognito-identity.amazonaws.com:sub}/*": {
-            "entityidentity": [
+          "skins/*": {
+            "guest": [
               "get",
-              "list",
-              "write",
-              "delete"
+              "list"
             ]
           }
         }
