@@ -10,6 +10,7 @@ const schema = a.schema({
   Todo: a
     .model({
       content: a.string(),
+      highscore: a.integer(),
     })
     .authorization((allow) => [allow.guest()]),
 });
@@ -22,6 +23,7 @@ export const data = defineData({
     defaultAuthorizationMode: 'iam',
   },
 });
+
 
 /*== STEP 2 ===============================================================
 Go to your frontend source code. From your client-side code, generate a
