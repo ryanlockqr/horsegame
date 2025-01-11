@@ -1,9 +1,9 @@
 {
   "auth": {
-    "user_pool_id": "us-east-1_XUXA0JP1e",
+    "user_pool_id": "us-east-1_ppmoGw4kz",
     "aws_region": "us-east-1",
-    "user_pool_client_id": "33l89qc5bcnftm272o8ka7hndm",
-    "identity_pool_id": "us-east-1:bb714f9a-1fe7-48f6-88c9-303c99c29a7b",
+    "user_pool_client_id": "6u5pr23unu918gqd0jqe811h3a",
+    "identity_pool_id": "us-east-1:f87361e6-59fa-44b2-818b-b71f21736199",
     "mfa_methods": [],
     "standard_required_attributes": [
       "email"
@@ -14,7 +14,6 @@
     "user_verification_types": [
       "email"
     ],
-    "groups": [],
     "mfa_configuration": "NONE",
     "password_policy": {
       "min_length": 8,
@@ -26,7 +25,7 @@
     "unauthenticated_identities_enabled": true
   },
   "data": {
-    "url": "https://3y7mscdgifcwfdckrs436wjqja.appsync-api.us-east-1.amazonaws.com/graphql",
+    "url": "https://yduidj5d7bcppmbf7vju2rsgqq.appsync-api.us-east-1.amazonaws.com/graphql",
     "aws_region": "us-east-1",
     "default_authorization_type": "AWS_IAM",
     "authorization_types": [
@@ -105,9 +104,16 @@
       "nonModels": {}
     }
   },
-  "version": "1.3",
   "storage": {
     "aws_region": "us-east-1",
-    "bucket_name": "horseskins"
-  }
+    "bucket_name": "amplify-d1l63ptgsze6nm-ma-horseskinsbucketdfb89530-kvmmatbzodzh",
+    "buckets": [
+      {
+        "name": "horseSkins",
+        "bucket_name": "amplify-d1l63ptgsze6nm-ma-horseskinsbucketdfb89530-kvmmatbzodzh",
+        "aws_region": "us-east-1"
+      }
+    ]
+  },
+  "version": "1.1"
 }
