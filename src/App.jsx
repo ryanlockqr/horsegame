@@ -34,7 +34,6 @@ export default function App() {
 
   useEffect(() => {
     fetchNotes();
-    fetchSkins();
   }, []);
 
   async function fetchNotes() {
@@ -145,34 +144,7 @@ export default function App() {
             ))}
           </Grid>
           <Heading level={2}>Available Skins</Heading>
-          <StorageImage alt="horse" path="skins/horse.jpg" />
-          <Grid
-            margin="3rem 0"
-            autoFlow="column"
-            justifyContent="center"
-            gap="2rem"
-            alignContent="center"
-          >
-            {skinUrls.map((skin) => (
-              <Flex
-                key={skin}
-                direction="column"
-                justifyContent="center"
-                alignItems="center"
-                gap="2rem"
-                border="1px solid #ccc"
-                padding="2rem"
-                borderRadius="5%"
-                className="box"
-              >
-                <Image
-                    src={skin}
-                    alt={`visual aid`}
-                    style={{ width: 400 }}
-                  />
-              </Flex>
-            ))}
-          </Grid>
+        
           <Button onClick={signOut}>Sign Out</Button>
         </Flex>
       )}
