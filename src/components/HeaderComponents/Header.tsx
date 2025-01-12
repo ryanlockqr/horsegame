@@ -1,6 +1,7 @@
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import "../styles/Header.css";
+import { NavLink } from "react-router-dom";
+import "../../styles/HeaderStyles/Header.css";
+import { HeaderMidButtonsContainer } from "./HeaderMiddleButtons";
 
 const BUTTONS = ["Play", "Settings", "Help"];
 const BUTTONS_DEV = ["High Scores", "Dev Menu"];
@@ -17,22 +18,11 @@ export const Header: React.FC = () => {
   }
   return (
     <div id="menu">
-      <NavLink to="/play">
+      <NavLink to="">
         <img src="/favicon.png" alt="logo.png" />
       </NavLink>
 
-      <div id="headerButtonsContainer">
-        {BUTTONS.map((button) => (
-          <div className="buttonContainer" key={button}>
-            <NavLink
-              to={`/${button.toLowerCase().replace(" ", "-")}`}
-              className={({ isActive }) => (isActive ? "selected" : "")}
-            >
-              {button}
-            </NavLink>
-          </div>
-        ))}
-      </div>
+      <HeaderMidButtonsContainer />
     </div>
   );
 };
