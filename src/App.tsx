@@ -1,7 +1,7 @@
 // src/App.tsx
 import React from "react";
 import { Game } from "./components/Game";
-import { Header } from "./components/Header";
+import { Header } from "./components/HeaderComponents/Header";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
