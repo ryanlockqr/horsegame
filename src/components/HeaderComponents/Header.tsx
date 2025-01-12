@@ -2,6 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import "../../styles/HeaderStyles/Header.css";
 import { HeaderMidButtonsContainer } from "./HeaderMiddleButtons";
+import { Profile } from "./Profile";
 
 const BUTTONS = ["Play", "Settings", "Help"];
 const BUTTONS_DEV = ["High Scores", "Dev Menu"];
@@ -23,6 +24,8 @@ export const Header: React.FC = () => {
       </NavLink>
 
       <HeaderMidButtonsContainer />
+
+      <Profile />
     </div>
   );
 };
