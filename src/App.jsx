@@ -16,7 +16,11 @@ import "@aws-amplify/ui-react/styles.css";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
 import { uploadData, getUrl } from "aws-amplify/storage";
-import { fetchUserAttributes } from 'aws-amplify/auth';
+import { fetchUserAttributes } from "aws-amplify/auth";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React from "react";
+import { Game } from "./components/Game";
+import { Header } from "./components/HeaderComponents/Header";
 
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
@@ -40,7 +44,8 @@ export default function App() {
       notes.map(async (note) => {
         if (note.image) {
           const linkToStorageFile = await getUrl({
-            path: ({ identityId }) => `profile_pictures/${identityId}/profile_pic.jpg`,
+            path: ({ identityId }) =>
+              `profile_pictures/${identityId}/profile_pic.jpg`,
           });
           console.log(linkToStorageFile.url);
           note.image = linkToStorageFile.url;
@@ -66,39 +71,41 @@ export default function App() {
       alert("Please select an image file.");
       return;
     }
-  
+
     try {
       // Upload the image to S3
       uploadData({
-        path: ({ identityId }) => `profile_pictures/${identityId}/profile_pic.jpg`,
+        path: ({ identityId }) =>
+          `profile_pictures/${identityId}/profile_pic.jpg`,
         data: file,
       });
-  
+
       alert("Profile picture uploaded successfully!");
     } catch (error) {
       console.error("Error uploading profile picture:", error);
       alert("Error uploading profile picture. Please try again.");
     }
-  }  
-  
+  }
+
   async function storeHighscore(highscore) {
     try {
       // Fetch current user attributes
       const userAttributes = await fetchUserAttributes();
       const email = userAttributes.email; // Access email attribute
-  
+
       // Fetch profile picture URL from storage
       const profilePicUrl = await getUrl({
-        path: ({ identityId }) => `profile_pictures/${identityId}/profile_pic.jpg`,
+        path: ({ identityId }) =>
+          `profile_pictures/${identityId}/profile_pic.jpg`,
       });
-  
+
       // Store highscore in the database
       const { data: newHighscore } = await client.models.Note.create({
-        name: email,  // Storing email as username
+        name: email, // Storing email as username
         description: highscore,
         image: profilePicUrl,
       });
-  
+
       console.log("Highscore stored successfully:", newHighscore);
     } catch (error) {
       console.error("Error storing highscore:", error);
@@ -106,6 +113,19 @@ export default function App() {
   }
 
   return (
+    <div className="App">
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/play" element={<Game />} />
+          <Route path="/settings" element={<Game />} />
+          <Route path="/help" element={<Game />} />
+          <Route path="/high-scores" element={<Game />} />
+          <Route path="/dev-menu" element={<Game />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
+    /**
     <Authenticator>
       {({ signOut }) => (
         <Flex
@@ -177,6 +197,6 @@ export default function App() {
           <Button onClick={signOut}>Sign Out</Button>
         </Flex>
       )}
-    </Authenticator>
+    </Authenticator>**/
   );
 }
