@@ -1,6 +1,7 @@
 # Hold your horses!
-- The best horse racing game ever, probably.
-
+> "The **best** horse racing game ever, probably."\
+> &mdash; <cite>Anonymous Software Engineer, London 2024</cite>
+   
 ## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
