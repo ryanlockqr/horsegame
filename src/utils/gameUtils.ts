@@ -1,5 +1,5 @@
 // src/utils/gameUtils.ts
-import { Item, Position } from "../types/GameTypes";
+import { Item } from "../types/GameTypes";
 import { v4 as uuidv4 } from "uuid";
 
 export const generateRandomItem = (
