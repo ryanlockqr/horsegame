@@ -20,8 +20,11 @@ import { fetchUserAttributes } from "aws-amplify/auth";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React from "react";
 import { Game } from "./components/Game";
-import { NotImplemented } from "./utils/NotImplemented";
+import { DevMenu } from "./components/DevMenu";
 import { Header } from "./components/HeaderComponents/Header";
+import { Settings } from "./components/Settings";
+import { HighScores } from "./components/HighScores";
+import { Help } from "./components/Help";
 
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
@@ -119,10 +122,10 @@ export default function App() {
         <Header />
         <Routes>
           <Route path="/play" element={<Game />} />
-          <Route path="/settings" element={<NotImplemented />} />
-          <Route path="/help" element={<NotImplemented />} />
-          <Route path="/high-scores" element={<NotImplemented />} />
-          <Route path="/dev-menu" element={<NotImplemented />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/high-scores" element={<HighScores />} />
+          <Route path="/dev-menu" element={<DevMenu />} />
         </Routes>
       </BrowserRouter>
     </div>
