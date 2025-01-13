@@ -19,9 +19,6 @@ import { uploadData, getUrl } from "aws-amplify/storage";
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React from "react";
-import { Game } from "./components/Game";
-import { NotImplemented } from "./utils/NotImplemented";
-import { Header } from "./components/HeaderComponents/Header";
 
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
@@ -45,7 +42,8 @@ export default function App() {
       notes.map(async (note) => {
         if (note.image) {
           const linkToStorageFile = await getUrl({
-            path: `profile_pictures/${note.owner}/profile_pic.jpg`,
+            path: ({ identityId }) =>
+              `profile_pictures/${identityId}/profile_pic.jpg`,
           });
           console.log(linkToStorageFile.url);
           note.image = linkToStorageFile.url;
@@ -101,8 +99,7 @@ export default function App() {
 
       // Store highscore in the database
       const { data: newHighscore } = await client.models.Note.create({
-        owner: identityId,
-        name: email, 
+        name: email, // Storing email as username
         description: highscore,
         image: profilePicUrl,
       });
