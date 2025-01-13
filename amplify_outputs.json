@@ -64,7 +64,7 @@
             "image": {
               "name": "image",
               "isArray": false,
-              "type": "String",
+              "type": "Boolean",
               "isRequired": false,
               "attributes": []
             },

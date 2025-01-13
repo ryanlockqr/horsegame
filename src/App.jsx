@@ -46,6 +46,7 @@ export default function App() {
               `profile_pictures/${identityId}/profile_pic.jpg`,
           });
           console.log(linkToStorageFile.url);
+          console.log(note.image);
           note.image = linkToStorageFile.url;
         }
         return note;
@@ -65,6 +66,7 @@ export default function App() {
     event.preventDefault();
     const form = new FormData(event.target);
     const file = form.get("profilePicture");
+    
     if (!file) {
       alert("Please select an image file.");
       return;
