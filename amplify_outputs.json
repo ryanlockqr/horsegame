@@ -57,14 +57,14 @@
             "description": {
               "name": "description",
               "isArray": false,
-              "type": "String",
+              "type": "Int",
               "isRequired": false,
               "attributes": []
             },
             "image": {
               "name": "image",
               "isArray": false,
-              "type": "Boolean",
+              "type": "String",
               "isRequired": false,
               "attributes": []
             },
@@ -130,7 +130,7 @@
         "bucket_name": "amplify-horsegame-ryanloc-amplifynotesdrivebucket1-tosuw6lzqvzf",
         "aws_region": "us-east-1",
         "paths": {
-          "profile_pictures/${cognito-identity.amazonaws.com:sub}/*": {
+          "profile_pictures/*": {
             "entityidentity": [
               "get",
               "list",

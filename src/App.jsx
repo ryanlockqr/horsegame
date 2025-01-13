@@ -42,11 +42,9 @@ export default function App() {
       notes.map(async (note) => {
         if (note.image) {
           const linkToStorageFile = await getUrl({
-            path: ({ identityId }) =>
-              `profile_pictures/${identityId}/profile_pic.jpg`,
+            path: `profile_pictures/${note.name}/profile_pic.jpg`,
           });
           console.log(linkToStorageFile.url);
-          console.log(note.image);
           note.image = linkToStorageFile.url;
         }
         return note;
@@ -66,17 +64,17 @@ export default function App() {
     event.preventDefault();
     const form = new FormData(event.target);
     const file = form.get("profilePicture");
-    
     if (!file) {
       alert("Please select an image file.");
       return;
     }
+    const userAttributes = await fetchUserAttributes();
+    const email = userAttributes.email; // Access email attribute
 
     try {
       // Upload the image to S3
       uploadData({
-        path: ({ identityId }) =>
-          `profile_pictures/${identityId}/profile_pic.jpg`,
+        path: `profile_pictures/${email}/profile_pic.jpg`,
         data: file,
       });
 
@@ -92,12 +90,6 @@ export default function App() {
       // Fetch current user attributes
       const userAttributes = await fetchUserAttributes();
       const email = userAttributes.email; // Access email attribute
-
-      // Fetch profile picture URL from storage
-      const profilePicUrl = await getUrl({
-        path: ({ identityId }) =>
-          `profile_pictures/${identityId}/profile_pic.jpg`,
-      });
 
       // Store highscore in the database
       const { data: newHighscore } = await client.models.Note.create({
@@ -180,6 +172,16 @@ export default function App() {
             />
             <Button type="submit">Upload</Button>
           </View>
+          
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+              {notes.map((note) => (
+                <View key={note.name} style={{ margin: 10 }}>
+                  <Text>{note.name}</Text>
+                  <Text>{note.description}</Text>
+                </View>
+              ))}
+            </View>
+
 
           <Button onClick={signOut}>Sign Out</Button>
         </Flex>

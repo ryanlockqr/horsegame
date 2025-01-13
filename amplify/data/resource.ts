@@ -11,7 +11,7 @@ const schema = a.schema({
   Note: a
     .model({
       name:a.string(),
-      description: a.string(),
+      description: a.integer(),
       image: a.string(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
