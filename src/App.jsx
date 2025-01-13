@@ -129,6 +129,7 @@ export default function App() {
             </Flex>
           </View>
           <Divider />
+
           <Heading level={2}>Current Notes</Heading>
           <Grid
             margin="3rem 0"
@@ -163,6 +164,7 @@ export default function App() {
               </Flex>
             ))}
           </Grid>
+          
           <View as="form" onSubmit={uploadProfilePicture}>
             <TextField
               label="Upload Profile Picture"
@@ -172,16 +174,7 @@ export default function App() {
             />
             <Button type="submit">Upload</Button>
           </View>
-          
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-              {notes.map((note) => (
-                <View key={note.name} style={{ margin: 10 }}>
-                  <Text>{note.name}</Text>
-                  <Text>{note.description}</Text>
-                </View>
-              ))}
-            </View>
-
+        
 
           <Button onClick={signOut}>Sign Out</Button>
         </Flex>
