@@ -26,7 +26,7 @@ import React from "react";
 
 Amplify.configure(outputs);
 const client = generateClient({
-  authMode: "userPool",
+  authMode: "apiKey",
 });
 
 export default function App() {
