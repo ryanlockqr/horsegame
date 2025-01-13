@@ -10,11 +10,14 @@ and "delete" any "Todo" records.
 const schema = a.schema({
   Note: a
     .model({
-      name:a.string(),
+      name: a.string(),
       description: a.string(),
       image: a.string(),
     })
-    .authorization((allow) => [allow.owner()]),
+    .authorization((allow) => [
+      allow.owner().to(["create", "read", "update", "delete"]), // Owners can fully manage their records
+      allow.guest().to(["read"]), // Guests can only read all records
+    ]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -22,11 +25,9 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: 'userPool',
+    defaultAuthorizationMode: 'userPool', // Ensures secure access for authenticated users
   },
 });
-
-
 
 /*== STEP 2 ===============================================================
 Go to your frontend source code. From your client-side code, generate a

@@ -45,8 +45,7 @@ export default function App() {
       notes.map(async (note) => {
         if (note.image) {
           const linkToStorageFile = await getUrl({
-            path: ({ identityId }) =>
-              `profile_pictures/${identityId}/profile_pic.jpg`,
+            path: `profile_pictures/${note.owner}/profile_pic.jpg`,
           });
           console.log(linkToStorageFile.url);
           note.image = linkToStorageFile.url;
@@ -102,7 +101,8 @@ export default function App() {
 
       // Store highscore in the database
       const { data: newHighscore } = await client.models.Note.create({
-        name: email, // Storing email as username
+        owner: identityId,
+        name: email, 
         description: highscore,
         image: profilePicUrl,
       });
@@ -113,20 +113,7 @@ export default function App() {
     }
   }
 
-  return (
-    <div className="App">
-      <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route path="/play" element={<Game />} />
-          <Route path="/settings" element={<NotImplemented />} />
-          <Route path="/help" element={<NotImplemented />} />
-          <Route path="/high-scores" element={<NotImplemented />} />
-          <Route path="/dev-menu" element={<NotImplemented />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
-    /**
+  return ( 
     <Authenticator>
       {({ signOut }) => (
         <Flex
@@ -198,6 +185,6 @@ export default function App() {
           <Button onClick={signOut}>Sign Out</Button>
         </Flex>
       )}
-    </Authenticator>**/
+    </Authenticator>
   );
 }
