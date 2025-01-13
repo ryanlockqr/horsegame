@@ -1,5 +1,5 @@
 import { NotImplemented } from "../utils/NotImplemented";
 
-export const HighScores: React.FC = () => {
+export const DevMenu: React.FC = () => {
   return <NotImplemented />;
 };
