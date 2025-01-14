@@ -4,20 +4,11 @@ import { useTranslation } from "react-i18next";
 
 import "../../styles/HeaderStyles/Header.css";
 
-const BUTTONS = ["header.play", "header.settings", ];
-const BUTTONS_DEV = ["header.high-scores", "header.dev-menu"];
-
-const DEV =
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1";
+const BUTTONS = ["header.play", "header.high-scores"];
 
 export const HeaderMidButtonsContainer: React.FC = () => {
   const { t } = useTranslation();
-  if (DEV && !BUTTONS.includes(BUTTONS_DEV[0])) {
-    BUTTONS_DEV.forEach((button: string) => {
-      BUTTONS.push(button);
-    });
-  }
+
   return (
     <div id="header-middle-buttons-container">
       {BUTTONS.map((button) => (

@@ -24,7 +24,6 @@ import React from "react";
 import { Game } from "./components/Game";
 import { DevMenu } from "./components/DevMenu";
 import { Header } from "./components/HeaderComponents/Header";
-import { Settings } from "./components/Settings";
 import { HighScores } from "./components/HighScores";
 import { Profile } from "./components/Profile";
 
@@ -130,7 +129,6 @@ export default function App() {
             <Header />
             <Routes>
               <Route path="/play" element={<Game />} />
-              <Route path="/settings" element={<Settings />} />
               <Route path="/high-scores" element={<HighScores />} />
               <Route path="/dev-menu" element={<DevMenu />} />
               <Route path="/profile" element={<Profile />} />
@@ -141,9 +139,6 @@ export default function App() {
               facilitate pfp upload
               <br />
               send HighScores to backend
-              <br />
-              settings
-              <br />
             </p>
           </BrowserRouter>
         </UserProvider>
