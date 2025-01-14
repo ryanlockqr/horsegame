@@ -28,12 +28,13 @@ export const Game: React.FC = () => {
   const animationFrameRef = useRef<number | null>(null);
   const backgroundXRef = useRef(0);
   const horseYRef = useRef(GAME_HEIGHT - HORSE_HEIGHT - 10);
-  const isJumpingRef = useRef(false);
+  const isJumpingRef = useRef(false); // checks if horse is jumping
   const obstaclesRef = useRef<
     { x: number; y: number; image: HTMLImageElement }[]
-  >([]);
+  >([]); // list of hurdles on the canvas
   const [gameOver, setGameOver] = useState(false);
 
+  // Resets all game state variables to their initial values for a new game
   const restartGame = () => {
     setScore(0);
     setGameOver(false);
@@ -58,6 +59,7 @@ export const Game: React.FC = () => {
     );
   };
 
+  // Collision occurs when horse interacts with hurdle colours, not hurdle images
   const detectColorCollision = (ctx: CanvasRenderingContext2D): boolean => {
     const horseX = 50;
     const horseY = horseYRef.current;
@@ -100,13 +102,14 @@ export const Game: React.FC = () => {
     return false;
   };
 
+  // handles jump logic
   const jump = () => {
     if (isJumpingRef.current || gameOver) return;
     isJumpingRef.current = true;
 
     const originalY = GAME_HEIGHT - HORSE_HEIGHT - 10;
-    let velocity = -10;
-    const gravity = 0.5;
+    let velocity = -10; // initial upwards velocity
+    const gravity = 0.5; // gravity force
 
     const jumpInterval = setInterval(() => {
       horseYRef.current += velocity;
@@ -120,18 +123,20 @@ export const Game: React.FC = () => {
     }, 20);
   };
 
+  // Updates score when game is running
   useEffect(() => {
     if (gameOver) return;
 
     const scoreInterval = setInterval(() => {
       setScore((prevScore) => prevScore + 1);
-    }, 75);
+    }, 75); // increment score every 75 ms
 
     return () => {
       clearInterval(scoreInterval);
     };
   }, [gameOver]);
 
+  // Horse running animation
   useEffect(() => {
     if (gameOver) return;
 
@@ -144,6 +149,7 @@ export const Game: React.FC = () => {
     return () => clearInterval(spriteInterval);
   }, [gameOver]);
 
+  // Main Game Loop
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
@@ -168,6 +174,7 @@ export const Game: React.FC = () => {
 
     const gameLoop = () => {
       if (ctx && canvas) {
+        // Render game over screen
         if (gameOver) {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           ctx.fillStyle = "black";
@@ -181,6 +188,7 @@ export const Game: React.FC = () => {
             GAME_HEIGHT / 2 + 50
           );
 
+          // Restart Button
           ctx.fillStyle = "white";
           ctx.fillRect(GAME_WIDTH / 2 - 100, GAME_HEIGHT / 2 + 80, 200, 50);
           ctx.fillStyle = "black";
@@ -195,6 +203,7 @@ export const Game: React.FC = () => {
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        // Background scrolling
         backgroundXRef.current -= BACKGROUND_MOVE_SPEED;
         if (backgroundXRef.current <= -GAME_WIDTH) {
           backgroundXRef.current = 0;
@@ -206,6 +215,7 @@ export const Game: React.FC = () => {
           ? horseImageNormalSprite
           : horseImageNormalSprite2;
 
+        // Draw background
         ctx.drawImage(
           background,
           backgroundXRef.current,
@@ -221,6 +231,7 @@ export const Game: React.FC = () => {
           GAME_HEIGHT
         );
 
+        // Draw horse
         ctx.drawImage(
           currentSprite,
           50,
@@ -229,6 +240,7 @@ export const Game: React.FC = () => {
           HORSE_HEIGHT
         );
 
+        // Hurdle spawning and movement
         if (Math.random() < 0.02) {
           const lastObstacle =
             obstaclesRef.current[obstaclesRef.current.length - 1];
@@ -260,11 +272,13 @@ export const Game: React.FC = () => {
           return obstacle.x + HURDLE_WIDTH > 0;
         });
 
+        // Score display
         ctx.fillStyle = "black";
         ctx.font = "24px Arial";
         ctx.textAlign = "left"; // Ensure score label position consistency
         ctx.fillText(`Score: ${score}`, 10, 30);
 
+        // Check for collisions
         if (detectColorCollision(ctx)) {
           setGameOver(true);
           return;
@@ -274,6 +288,7 @@ export const Game: React.FC = () => {
       animationFrameRef.current = requestAnimationFrame(gameLoop);
     };
 
+    // Onclick for restart button
     const handleRestartClick = (e: MouseEvent) => {
       if (!gameOver) return;
 
@@ -303,6 +318,7 @@ export const Game: React.FC = () => {
     };
   }, [gameOver, currentRunningSprite, score]);
 
+  // Listens for spacebar input
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === "Space" || e.key === " ") {
