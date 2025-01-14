@@ -1,16 +1,17 @@
 import React, { useEffect, useRef } from "react";
 import "../styles/Game.css";
-import backgroundImage from "../assets/images/background.png"; // Background image import
-import horseImageNormal from "../assets/images/normal.png"; // Normal horse image
-import horseImageJump from "../assets/images/jumping.png"; // Jumping horse image
-import hurdleImageSrc from "../assets/images/hurdle1.png"; // Hurdle image import
+import backgroundImage from "../assets/images/background.png";
+import horseImageNormal from "../assets/images/normal.png";
+import horseImageJump from "../assets/images/jumping.png";
+import hurdleImageSrc1 from "../assets/images/hurdle1.png";
+import hurdleImageSrc2 from "../assets/images/hurdle2.png";
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 400;
-const HORSE_WIDTH = 60;
-const HORSE_HEIGHT = 40;
+const HORSE_WIDTH = 65;
+const HORSE_HEIGHT = 50;
 const HURDLE_WIDTH = 50;
-const HURDLE_HEIGHT = 40;
+const HURDLE_HEIGHT = 70;
 const MIN_HURDLE_DISTANCE = 175; // Minimum distance between consecutive hurdles
 const BACKGROUND_MOVE_SPEED = 3;
 
@@ -21,7 +22,9 @@ export const Game: React.FC = () => {
   const backgroundXRef = useRef(0); // Background position
   const horseYRef = useRef(GAME_HEIGHT - HORSE_HEIGHT - 10); // Horse's vertical position
   const isJumpingRef = useRef(false); // Track if the horse is mid-jump
-  const obstaclesRef = useRef<{ x: number; y: number }[]>([]); // Track obstacles
+  const obstaclesRef = useRef<
+    { x: number; y: number; image: HTMLImageElement }[]
+  >([]); // Track obstacles
 
   // Jump logic
   const jump = () => {
@@ -59,8 +62,11 @@ export const Game: React.FC = () => {
     const horseImageJumpSprite = new Image();
     horseImageJumpSprite.src = horseImageJump;
 
-    const hurdleImage = new Image();
-    hurdleImage.src = hurdleImageSrc;
+    const hurdleImage1 = new Image();
+    hurdleImage1.src = hurdleImageSrc1;
+
+    const hurdleImage2 = new Image();
+    hurdleImage2.src = hurdleImageSrc2;
 
     const gameLoop = () => {
       if (ctx && canvas) {
@@ -107,9 +113,14 @@ export const Game: React.FC = () => {
             lastObstacle.x < GAME_WIDTH - MIN_HURDLE_DISTANCE; // Last obstacle is far enough away
 
           if (canSpawn) {
+            // Randomly pick between hurdle1 and hurdle2
+            const selectedHurdleImage =
+              Math.random() < 0.5 ? hurdleImage1 : hurdleImage2;
+
             obstaclesRef.current.push({
               x: GAME_WIDTH,
-              y: GAME_HEIGHT - HURDLE_HEIGHT - 10, // Ground position
+              y: GAME_HEIGHT - HURDLE_HEIGHT - 6, // Ground position
+              image: selectedHurdleImage, // Store the selected image
             });
           }
         }
@@ -121,7 +132,7 @@ export const Game: React.FC = () => {
 
           // Draw the obstacle
           ctx.drawImage(
-            hurdleImage,
+            obstacle.image, // Use the specific image for this obstacle
             obstacle.x,
             obstacle.y,
             HURDLE_WIDTH,
