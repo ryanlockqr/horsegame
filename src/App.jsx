@@ -25,6 +25,12 @@ import { Header } from "./components/HeaderComponents/Header";
 import { Settings } from "./components/Settings";
 import { HighScores } from "./components/HighScores";
 import { Help } from "./components/Help";
+import { Profile } from "./components/Profile";
+
+import { UserProvider } from "./utils/UserContext";
+import "./styles/app.css";
+
+import "./utils/i18n";
 
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
@@ -57,7 +63,6 @@ export default function App() {
         return note;
       })
     );
-    console.log(notes);
     setNotes(notes);
   }
 
@@ -118,16 +123,34 @@ export default function App() {
 
   return (
     <div className="App">
-      <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route path="/play" element={<Game />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/help" element={<Help />} />
-          <Route path="/high-scores" element={<HighScores />} />
-          <Route path="/dev-menu" element={<DevMenu />} />
-        </Routes>
-      </BrowserRouter>
+      <UserProvider>
+        <BrowserRouter>
+          <Header />
+          <Routes>
+            <Route path="/play" element={<Game />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/high-scores" element={<HighScores />} />
+            <Route path="/dev-menu" element={<DevMenu />} />
+            <Route path="/profile" element={<Profile />} />
+          </Routes>
+          <p style={{ backgroundColor: "black" }}>
+            facilitate pfp upload
+            <br />
+            scoring
+            <br />
+            high scores
+            <br />
+            settings
+            <br />
+            help <br />
+            dev menu <br />
+            hamburger menu <br />
+            language dropdown
+            <br />
+          </p>
+        </BrowserRouter>
+      </UserProvider>
     </div>
     /**
     <Authenticator>

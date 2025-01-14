@@ -1,8 +1,8 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
 import "../../styles/HeaderStyles/Header.css";
 import { HeaderMidButtonsContainer } from "./HeaderMiddleButtons";
-import { Profile } from "./Profile";
+import { ProfileHamburger } from "./ProfileHamburger";
+import { HeaderLeftButtonsContainer } from "./HeaderLeftButtons";
 
 const BUTTONS = ["Play", "Settings", "Help"];
 const BUTTONS_DEV = ["High Scores", "Dev Menu"];
@@ -17,15 +17,14 @@ export const Header: React.FC = () => {
       BUTTONS.push(button);
     });
   }
+
   return (
     <div id="menu">
-      <NavLink to="">
-        <img src="/favicon.png" alt="logo.png" />
-      </NavLink>
+      <HeaderLeftButtonsContainer />
 
       <HeaderMidButtonsContainer />
 
-      <Profile />
+      <ProfileHamburger />
     </div>
   );
 };

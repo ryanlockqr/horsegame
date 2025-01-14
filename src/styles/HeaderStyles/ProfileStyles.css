@@ -8,11 +8,18 @@
     height: 20px;
     width: 30px;
     padding: 0px 5px;
+    border-radius: 50%;
+  }
+
+  .logged-in-reminder {
+    display: flex;
+    align-items: center;
   }
 }
 
 #profile-hover {
   position: absolute;
+  background-color: violet;
   top: 100%;
   left: 0;
   div {

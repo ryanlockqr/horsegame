@@ -1,0 +1,11 @@
+{
+  "user-page-greeting": "Hello, {{name}}!",
+  "header": {
+    "play": "Play",
+    "settings": "Settings",
+    "help": "Help",
+    "high-scores": "High Scores",
+    "dev-menu": "Dev Menu"
+  },
+  "sign-out": "Sign Out"
+}

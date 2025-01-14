@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import "../styles/Game.css";
 import backgroundImage from "../assets/images/background.png"; // Background image import
 import horseImageNormal from "../assets/images/normal.png"; // Replace with your actual file path
-import horseImageJump from "../assets/images/jumping.png"; 
+import horseImageJump from "../assets/images/jumping.png";
+//import { useTranslation } from "react-i18next";
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 400;
@@ -11,6 +12,7 @@ const HORSE_HEIGHT = 80;
 
 export const Game: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  //const { t, i18n } = useTranslation();
 
   // Horse state
   const [horse, setHorse] = useState({
