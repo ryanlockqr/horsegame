@@ -25,7 +25,8 @@
     "errors": {
       "invalid": "Usernames can only contain letters and numbers! No spaces!",
       "dupe": "You're already using that username!",
-      "short": "Usernames must be at least 3 characters long!"
+      "short": "Usernames must be at least 3 characters long!",
+      "profanity": "Naughty!"
     }
   },
   "high-scores": {
