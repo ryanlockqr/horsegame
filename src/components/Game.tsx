@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import "../styles/Game.css";
 import backgroundImage from "../assets/images/background.png"; // Background image import
-import horseImageSrc from "../assets/images/normal.png"; // Horse image import
+import horseImageNormal from "../assets/images/normal.png"; // Normal horse image
+import horseImageJump from "../assets/images/jumping.png"; // Jumping horse image
 import hurdleImageSrc from "../assets/images/hurdle1.png"; // Hurdle image import
 
 const GAME_WIDTH = 800;
@@ -11,6 +12,7 @@ const HORSE_HEIGHT = 40;
 const HURDLE_WIDTH = 50;
 const HURDLE_HEIGHT = 40;
 const MIN_HURDLE_DISTANCE = 175; // Minimum distance between consecutive hurdles
+const BACKGROUND_MOVE_SPEED = 3;
 
 export const Game: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -51,10 +53,13 @@ export const Game: React.FC = () => {
     const background = new Image();
     background.src = backgroundImage;
 
-    const horseImage = new Image(); // Load the horse image
-    horseImage.src = horseImageSrc;
+    const horseImageNormalSprite = new Image();
+    horseImageNormalSprite.src = horseImageNormal;
 
-    const hurdleImage = new Image(); // Load the hurdle image
+    const horseImageJumpSprite = new Image();
+    horseImageJumpSprite.src = horseImageJump;
+
+    const hurdleImage = new Image();
     hurdleImage.src = hurdleImageSrc;
 
     const gameLoop = () => {
@@ -63,7 +68,7 @@ export const Game: React.FC = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Update background position
-        backgroundXRef.current -= 3;
+        backgroundXRef.current -= BACKGROUND_MOVE_SPEED;
         if (backgroundXRef.current <= -GAME_WIDTH) {
           backgroundXRef.current = 0; // Reset when off-screen
         }
@@ -84,9 +89,9 @@ export const Game: React.FC = () => {
           GAME_HEIGHT
         );
 
-        // Draw the horse
+        // Draw the horse with the appropriate sprite
         ctx.drawImage(
-          horseImage,
+          isJumpingRef.current ? horseImageJumpSprite : horseImageNormalSprite,
           50, // Fixed horizontal position for the horse
           horseYRef.current, // Use ref-based y position
           HORSE_WIDTH,
@@ -112,7 +117,7 @@ export const Game: React.FC = () => {
         // Move and draw obstacles
         obstaclesRef.current = obstaclesRef.current.filter((obstacle) => {
           // Move the obstacle to the left
-          obstacle.x -= 3;
+          obstacle.x -= BACKGROUND_MOVE_SPEED;
 
           // Draw the obstacle
           ctx.drawImage(
