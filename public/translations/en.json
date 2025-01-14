@@ -34,6 +34,7 @@
     "waiting": "Waiting for high scores...",
     "user": "User",
     "score": "Score",
-    "date": "Date"
+    "date": "Date",
+    "last-updated": "Last updated: {{date}}"
   }
 }

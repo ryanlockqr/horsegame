@@ -34,6 +34,7 @@
     "waiting": "正在等待最高分...",
     "user": "用户",
     "score": "分数",
-    "date": "日期"
+    "date": "日期",
+    "last-updated": "最后更新：{{date}}"
   }
 }
