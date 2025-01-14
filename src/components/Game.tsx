@@ -8,6 +8,8 @@ import horseImageJump from "../assets/images/jumping.png";
 import hurdleImageSrc1 from "../assets/images/hurdle1.png";
 import hurdleImageSrc2 from "../assets/images/hurdle2.png";
 
+import { useTranslation } from "react-i18next";
+
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 400;
 const HORSE_WIDTH = 65;
@@ -36,6 +38,7 @@ export const Game: React.FC = () => {
   >([]); // list of hurdles on the canvas
   const [gameOver, setGameOver] = useState(false);
 
+  const { t } = useTranslation();
 
   // // Define function to store the high score in AWS (may not be necessary)
   // const storeHighScore = async (score: number) => {
@@ -203,10 +206,10 @@ export const Game: React.FC = () => {
           ctx.fillStyle = "black";
           ctx.font = "48px Arial";
           ctx.textAlign = "center";
-          ctx.fillText("Game Over", GAME_WIDTH / 2, GAME_HEIGHT / 2);
+          ctx.fillText(t("game.game-over"), GAME_WIDTH / 2, GAME_HEIGHT / 2);
           ctx.font = "32px Arial";
           ctx.fillText(
-            `Final Score: ${score}`,
+            t('game.final-score', { scr: score }),
             GAME_WIDTH / 2,
             GAME_HEIGHT / 2 + 50
           );
@@ -216,7 +219,7 @@ export const Game: React.FC = () => {
           ctx.fillRect(GAME_WIDTH / 2 - 100, GAME_HEIGHT / 2 + 80, 200, 50);
           ctx.fillStyle = "black";
           ctx.font = "24px Arial";
-          ctx.fillText("Restart", GAME_WIDTH / 2, GAME_HEIGHT / 2 + 115);
+          ctx.fillText(t('game.restart'), GAME_WIDTH / 2, GAME_HEIGHT / 2 + 115);
 
           if (animationFrameRef.current) {
             cancelAnimationFrame(animationFrameRef.current);
@@ -299,7 +302,7 @@ export const Game: React.FC = () => {
         ctx.fillStyle = "black";
         ctx.font = "24px Arial";
         ctx.textAlign = "left"; // Ensure score label position consistency
-        ctx.fillText(`Score: ${score}`, 10, 30);
+        ctx.fillText(t("game.score", { scr: score }), 10, 30);
 
         // Check for collisions
         if (detectColorCollision(ctx)) {

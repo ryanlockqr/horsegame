@@ -37,6 +37,12 @@
       "score": "Score",
       "date": "Date",
       "last-updated": "Dernière mise à jour : {{date}}"
+    },
+    "game": {
+      "score": "Score : {{scr}}",
+      "restart": "Recommencer",
+      "final-score": "Score Final : {{scr}}",
+      "game-over": "Jeu Terminé"
     }
   }
   
