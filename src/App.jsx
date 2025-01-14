@@ -18,6 +18,7 @@ import outputs from "../amplify_outputs.json";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import React from "react";
 import { Game } from "./components/Game";
 import { DevMenu } from "./components/DevMenu";
@@ -123,34 +124,36 @@ export default function App() {
 
   return (
     <div className="App">
-      <UserProvider>
-        <BrowserRouter>
-          <Header />
-          <Routes>
-            <Route path="/play" element={<Game />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/help" element={<Help />} />
-            <Route path="/high-scores" element={<HighScores />} />
-            <Route path="/dev-menu" element={<DevMenu />} />
-            <Route path="/profile" element={<Profile />} />
-          </Routes>
-          <p style={{ backgroundColor: "black" }}>
-            facilitate pfp upload
-            <br />
-            scoring
-            <br />
-            high scores
-            <br />
-            settings
-            <br />
-            help <br />
-            dev menu <br />
-            hamburger menu <br />
-            language dropdown
-            <br />
-          </p>
-        </BrowserRouter>
-      </UserProvider>
+      <Authenticator>
+        <UserProvider>
+          <BrowserRouter>
+            <Header />
+            <Routes>
+              <Route path="/play" element={<Game />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/help" element={<Help />} />
+              <Route path="/high-scores" element={<HighScores />} />
+              <Route path="/dev-menu" element={<DevMenu />} />
+              <Route path="/profile" element={<Profile />} />
+            </Routes>
+            <p style={{ backgroundColor: "black" }}>
+              facilitate pfp upload
+              <br />
+              scoring
+              <br />
+              high scores
+              <br />
+              settings
+              <br />
+              help <br />
+              dev menu <br />
+              hamburger menu <br />
+              language dropdown
+              <br />
+            </p>
+          </BrowserRouter>
+        </UserProvider>
+      </Authenticator>
     </div>
     /**
     <Authenticator>
