@@ -34,6 +34,26 @@ export const Game: React.FC = () => {
   >([]); // list of hurdles on the canvas
   const [gameOver, setGameOver] = useState(false);
 
+  // // Define function to store the high score in AWS (may not be necessary)
+  // const storeHighScore = async (score: number) => {
+  //   try {
+  //     // Example implementation for posting to AWS
+  //     const response = await fetch("https://aws-endpoint.example.com/highscores", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ score }),
+  //     });
+
+  //     if (!response.ok) {
+  //       console.error("Failed to store high score:", response.statusText);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error storing high score:", error);
+  //   }
+  // };
+
   // Resets all game state variables to their initial values for a new game
   const restartGame = () => {
     setScore(0);
@@ -280,6 +300,7 @@ export const Game: React.FC = () => {
 
         // Check for collisions
         if (detectColorCollision(ctx)) {
+          // storeHighScore(score);
           setGameOver(true);
           return;
         }
