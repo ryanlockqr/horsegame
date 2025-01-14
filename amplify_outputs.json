@@ -5,15 +5,9 @@
     "user_pool_client_id": "33l89qc5bcnftm272o8ka7hndm",
     "identity_pool_id": "us-east-1:bb714f9a-1fe7-48f6-88c9-303c99c29a7b",
     "mfa_methods": [],
-    "standard_required_attributes": [
-      "email"
-    ],
-    "username_attributes": [
-      "email"
-    ],
-    "user_verification_types": [
-      "email"
-    ],
+    "standard_required_attributes": ["email"],
+    "username_attributes": ["email"],
+    "user_verification_types": ["email"],
     "groups": [],
     "mfa_configuration": "NONE",
     "password_policy": {
@@ -28,10 +22,9 @@
   "data": {
     "url": "https://3y7mscdgifcwfdckrs436wjqja.appsync-api.us-east-1.amazonaws.com/graphql",
     "aws_region": "us-east-1",
-    "default_authorization_type": "AMAZON_COGNITO_USER_POOLS",
-    "authorization_types": [
-      "AWS_IAM"
-    ],
+    "api_key": "da2-xekcjiaqlbaidhjrecmsbdewhi",
+    "default_authorization_type": "API_KEY",
+    "authorization_types": ["AMAZON_COGNITO_USER_POOLS", "AWS_IAM"],
     "model_introspection": {
       "version": 1,
       "models": {
@@ -55,7 +48,7 @@
             "description": {
               "name": "description",
               "isArray": false,
-              "type": "String",
+              "type": "Int",
               "isRequired": false,
               "attributes": []
             },
@@ -95,16 +88,9 @@
               "properties": {
                 "rules": [
                   {
-                    "provider": "userPools",
-                    "ownerField": "owner",
-                    "allow": "owner",
-                    "identityClaim": "cognito:username",
-                    "operations": [
-                      "create",
-                      "update",
-                      "delete",
-                      "read"
-                    ]
+                    "allow": "public",
+                    "provider": "apiKey",
+                    "operations": ["create", "update", "delete", "read"]
                   }
                 ]
               }
@@ -130,13 +116,8 @@
         "bucket_name": "amplify-horsegame-ryanloc-amplifynotesdrivebucket1-tosuw6lzqvzf",
         "aws_region": "us-east-1",
         "paths": {
-          "profile_pictures/${cognito-identity.amazonaws.com:sub}/*": {
-            "entityidentity": [
-              "get",
-              "list",
-              "write",
-              "delete"
-            ]
+          "profile_pictures/*": {
+            "entityidentity": ["get", "list", "write", "delete"]
           }
         }
       }
