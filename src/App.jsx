@@ -136,14 +136,15 @@ export default function App() {
               <Route path="/profile" element={<Profile />} />
             </Routes>
             <p style={{ backgroundColor: "black" }}>
-              TODO <br />
+              TODO
+              <br />
               facilitate pfp upload
-              <br /> high scores
+              <br />
+              send HighScores to backend
+              <br />
+              profainity filter
               <br />
               settings
-              <br />
-              dev menu <br />
-              language dropdown
               <br />
             </p>
           </BrowserRouter>
