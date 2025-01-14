@@ -27,6 +27,8 @@ import { Header } from "./components/HeaderComponents/Header";
 import { HighScores } from "./components/HighScores";
 import { Profile } from "./components/Profile";
 
+import { Navigate } from "react-router-dom";
+
 import { UserProvider } from "./utils/UserContext";
 import "./styles/app.css";
 
@@ -128,10 +130,11 @@ export default function App() {
           <BrowserRouter>
             <Header />
             <Routes>
+              <Route path="/" element={<Navigate to="/play" replace />} />
               <Route path="/play" element={<Game />} />
               <Route path="/high-scores" element={<HighScores />} />
-              <Route path="/dev-menu" element={<DevMenu />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="*" element={<Navigate to="/play" replace />} />
             </Routes>
             <p style={{ backgroundColor: "black" }}>
               TODO
