@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import "../styles/Game.css";
 import backgroundImage from "../assets/images/background.png"; // Background image import
 import horseImageSrc from "../assets/images/normal.png"; // Horse image import
@@ -10,6 +10,7 @@ const HORSE_WIDTH = 60;
 const HORSE_HEIGHT = 40;
 const HURDLE_WIDTH = 50;
 const HURDLE_HEIGHT = 40;
+const MIN_HURDLE_DISTANCE = 175; // Minimum distance between consecutive hurdles
 
 export const Game: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -56,8 +57,6 @@ export const Game: React.FC = () => {
     const hurdleImage = new Image(); // Load the hurdle image
     hurdleImage.src = hurdleImageSrc;
 
-    let frameCount = 0; // Track frames for obstacle spawning
-
     const gameLoop = () => {
       if (ctx && canvas) {
         // Clear the canvas
@@ -94,13 +93,20 @@ export const Game: React.FC = () => {
           HORSE_HEIGHT
         );
 
-        // Handle obstacle spawning
-        if (frameCount % 120 === 0) {
-          // Spawn a new obstacle every 120 frames (~2 seconds at 60 FPS)
-          obstaclesRef.current.push({
-            x: GAME_WIDTH,
-            y: GAME_HEIGHT - HURDLE_HEIGHT - 10, // Ground position
-          });
+        // Random hurdle spawning with minimum distance enforcement
+        if (Math.random() < 0.02) {
+          const lastObstacle =
+            obstaclesRef.current[obstaclesRef.current.length - 1];
+          const canSpawn =
+            !lastObstacle || // No obstacle exists yet
+            lastObstacle.x < GAME_WIDTH - MIN_HURDLE_DISTANCE; // Last obstacle is far enough away
+
+          if (canSpawn) {
+            obstaclesRef.current.push({
+              x: GAME_WIDTH,
+              y: GAME_HEIGHT - HURDLE_HEIGHT - 10, // Ground position
+            });
+          }
         }
 
         // Move and draw obstacles
@@ -120,8 +126,6 @@ export const Game: React.FC = () => {
           // Remove the obstacle if it goes off-screen
           return obstacle.x + HURDLE_WIDTH > 0;
         });
-
-        frameCount++; // Increment the frame count
       }
 
       // Request the next frame
