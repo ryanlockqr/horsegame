@@ -136,16 +136,13 @@ export default function App() {
               <Route path="/profile" element={<Profile />} />
             </Routes>
             <p style={{ backgroundColor: "black" }}>
+              TODO <br />
               facilitate pfp upload
-              <br />
-              scoring
-              <br />
-              high scores
+              <br /> high scores
               <br />
               settings
               <br />
               dev menu <br />
-              hamburger menu <br />
               language dropdown
               <br />
             </p>
