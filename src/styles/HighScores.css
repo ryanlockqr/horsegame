@@ -1,9 +1,16 @@
 #high-scores-component {
+  background-color: grey; /*https://www.w3schools.com/colors/colors_shades.asp*/
+  border-radius: 5px;
+  margin: 50px auto 5px;
+  padding: 25px;
+
   display: flex;
   flex-direction: column;
-  background: lightblue;
+  align-items: center;
+  justify-content: center;
+  align-self: center; /*cba to do flex within entire app component*/
 
-  border-radius: 15px;
+  width: 90%;
 
   #phase1 {
     display: flex;

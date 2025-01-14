@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../styles/Profile.css";
 import { useTranslation } from "react-i18next";
 import { defaultUser, useUser } from "../utils/UserContext";
+import naughtyWords from "naughty-words";
 
 type UsernameErrorCheckResult = {
   e: string /* error message */;
@@ -74,12 +75,30 @@ export const Profile: React.FC = () => {
     }
   }
 
+  function containsProfanity(str: string): boolean {
+    const lower = str.toLowerCase();
+
+    // Check against multiple language lists - doesnt pass scunthorpe problem but fuck it
+    return (
+      naughtyWords.en.some((word) => lower.includes(word)) ||
+      naughtyWords.fr.some((word) => lower.includes(word)) ||
+      naughtyWords.es.some((word) => lower.includes(word)) ||
+      naughtyWords.zh.some((word) => lower.includes(word))
+    );
+  }
+
   /* prevent RCE, SQL injection, XSS, racism, profanity, etc. */
   function validateUsername(newUsername: string): UsernameErrorCheckResult {
     let res: UsernameErrorCheckResult = {
       e: "",
       error: false,
     };
+
+    if (containsProfanity(newUsername)) {
+      res.e = "profile.errors.profanity";
+      res.error = true;
+      return res;
+    }
 
     if (!usernameRegex.test(newUsername)) {
       res.e = "profile.errors.invalid";

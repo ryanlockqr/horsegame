@@ -142,8 +142,6 @@ export default function App() {
               <br />
               send HighScores to backend
               <br />
-              profainity filter
-              <br />
               settings
               <br />
             </p>

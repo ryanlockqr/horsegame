@@ -20,9 +20,15 @@ const client = generateClient({
 });
 export const HighScores: React.FC = () => {
   const [waitingForData, setWaitingForData] = React.useState(false);
-  const [lastRefreshed, setLastRefreshed] = React.useState(Date.now());
+  const [lastRefreshed, setLastRefreshed] = React.useState(() => {
+    const stored = localStorage.getItem("lastRefreshed");
+    return stored ? parseInt(stored) : Date.now();
+  });
   const [canRefresh, setCanRefresh] = React.useState(true);
-  const [scores, setScores] = React.useState<any[]>([]);
+  const [scores, setScores] = React.useState<any[]>(() => {
+    const stored = localStorage.getItem("highScores");
+    return stored ? JSON.parse(stored) : [];
+  });
   const { user } = useUser();
   const [t] = useTranslation();
 
@@ -30,8 +36,17 @@ export const HighScores: React.FC = () => {
   const FIVE_MINUTES = ONE_MINUTE * 5;
 
   React.useEffect(() => {
-    // Initial load if no scores
-    if (!waitingForData && scores.length === 0) {
+    localStorage.setItem("highScores", JSON.stringify(scores));
+    localStorage.setItem("lastRefreshed", lastRefreshed.toString());
+  }, [scores, lastRefreshed]);
+
+  React.useEffect(() => {
+    // Only fetch if we have no scores OR if it's been 5 minutes since last refresh
+    const timeSinceLastRefresh = Date.now() - lastRefreshed;
+    if (
+      (!waitingForData && scores.length === 0) ||
+      timeSinceLastRefresh >= FIVE_MINUTES
+    ) {
       getHighScores();
     }
 
@@ -40,7 +55,7 @@ export const HighScores: React.FC = () => {
       if (timeSinceLastRefresh >= FIVE_MINUTES) {
         getHighScores();
       }
-    }, 5000); // Check every 5 seconds
+    }, 5000);
 
     return () => clearInterval(checkInterval);
   }, [lastRefreshed, scores.length]);
