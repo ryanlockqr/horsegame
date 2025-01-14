@@ -1,29 +1,26 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import "../../styles/HeaderStyles/HeaderMiddleButtonStyles.css";
+import { useTranslation } from "react-i18next";
 
-const BUTTONS = ["Play", "Settings", "Help"];
-const BUTTONS_DEV = ["High Scores", "Dev Menu"];
+import "../../styles/HeaderStyles/Header.css";
 
-const DEV =
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1";
+const BUTTONS = ["header.play", "header.high-scores"];
 
 export const HeaderMidButtonsContainer: React.FC = () => {
-  if (DEV && !BUTTONS.includes(BUTTONS_DEV[0])) {
-    BUTTONS_DEV.forEach((button: string) => {
-      BUTTONS.push(button);
-    });
-  }
+  const { t } = useTranslation();
+
   return (
     <div id="header-middle-buttons-container">
       {BUTTONS.map((button) => (
         <div className="buttonContainer" key={button}>
           <NavLink
-            to={`/${button.toLowerCase().replace(" ", "-")}`}
+            to={`/${button
+              .toLowerCase()
+              .replace(" ", "-")
+              .replace("header.", "")}`}
             className={({ isActive }) => (isActive ? "selected" : "")}
           >
-            {button}
+            {t(button)}
           </NavLink>
         </div>
       ))}

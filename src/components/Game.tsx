@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../styles/Game.css";
+
 import backgroundImage from "../assets/images/background.png";
 import horseImageNormal from "../assets/images/normal.png";
 import horseImageNormal2 from "../assets/images/normal2.png";
@@ -25,6 +26,7 @@ export const Game: React.FC = () => {
   const [currentRunningSprite, setCurrentRunningSprite] = useState(0);
   const [score, setScore] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
   const animationFrameRef = useRef<number | null>(null);
   const backgroundXRef = useRef(0);
   const horseYRef = useRef(GAME_HEIGHT - HORSE_HEIGHT - 10);
@@ -33,6 +35,7 @@ export const Game: React.FC = () => {
     { x: number; y: number; image: HTMLImageElement }[]
   >([]); // list of hurdles on the canvas
   const [gameOver, setGameOver] = useState(false);
+
 
   // // Define function to store the high score in AWS (may not be necessary)
   // const storeHighScore = async (score: number) => {
