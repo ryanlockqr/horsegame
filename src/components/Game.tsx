@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "../styles/Game.css";
 import backgroundImage from "../assets/images/background.png";
 import horseImageNormal from "../assets/images/normal.png";
+import horseImageNormal2 from "../assets/images/normal2.png";
 import horseImageJump from "../assets/images/jumping.png";
 import hurdleImageSrc1 from "../assets/images/hurdle1.png";
 import hurdleImageSrc2 from "../assets/images/hurdle2.png";
@@ -21,6 +22,8 @@ const YELLOW_HURDLE_COLOR = { r: 255, g: 240, b: 0 };
 const COLOR_TOLERANCE = 10; // allow
 
 export const Game: React.FC = () => {
+  const SPRITE_SWITCH_INTERVAL = 200;
+  const [currentRunningSprite, setCurrentRunningSprite] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const backgroundXRef = useRef(0);
@@ -121,6 +124,9 @@ export const Game: React.FC = () => {
     const horseImageNormalSprite = new Image();
     horseImageNormalSprite.src = horseImageNormal;
 
+    const horseImageNormalSprite2 = new Image();
+    horseImageNormalSprite2.src = horseImageNormal2;
+
     const horseImageJumpSprite = new Image();
     horseImageJumpSprite.src = horseImageJump;
 
@@ -129,6 +135,13 @@ export const Game: React.FC = () => {
 
     const hurdleImage2 = new Image();
     hurdleImage2.src = hurdleImageSrc2;
+
+    // Set up sprite alternation interval
+  const spriteInterval = setInterval(() => {
+    if (!isJumpingRef.current && !gameOver) {
+      setCurrentRunningSprite((prev) => (prev === 0 ? 1 : 0));
+    }
+  }, SPRITE_SWITCH_INTERVAL);
 
     const gameLoop = () => {
       if (ctx && canvas) {
@@ -155,6 +168,11 @@ export const Game: React.FC = () => {
           backgroundXRef.current = 0;
         }
 
+
+        const currentSprite =
+        isJumpingRef.current ? horseImageJumpSprite : (currentRunningSprite === 0 ? horseImageNormalSprite : horseImageNormalSprite2);
+
+
         // Draw the background
         ctx.drawImage(
           background,
@@ -173,12 +191,16 @@ export const Game: React.FC = () => {
 
         // Draw the horse
         ctx.drawImage(
-          isJumpingRef.current ? horseImageJumpSprite : horseImageNormalSprite,
+          currentSprite,
           50,
           horseYRef.current,
           HORSE_WIDTH,
           HORSE_HEIGHT
         );
+
+        ctx.fillStyle = 'white';
+        ctx.font = '20px Arial';
+        ctx.fillText(`Current Sprite: ${currentRunningSprite}`, 10, 30);
 
         // Random hurdle spawning
         if (Math.random() < 0.02) {
@@ -229,8 +251,9 @@ export const Game: React.FC = () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
+      clearInterval(spriteInterval);
     };
-  }, [gameOver]);
+  }, [gameOver, currentRunningSprite]);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
