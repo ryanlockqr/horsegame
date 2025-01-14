@@ -1,42 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../styles/Game.css";
 import backgroundImage from "../assets/images/background.png"; // Background image import
-import horseImageNormal from "../assets/images/normal.png"; // Replace with your actual file path
-import horseImageJump from "../assets/images/jumping.png"; 
+import horseImageSrc from "../assets/images/normal.png"; // Horse image import
+import hurdleImageSrc from "../assets/images/hurdle1.png"; // Hurdle image import
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 400;
-const HORSE_WIDTH = 120;
-const HORSE_HEIGHT = 80;
+const HORSE_WIDTH = 60;
+const HORSE_HEIGHT = 40;
+const HURDLE_WIDTH = 50;
+const HURDLE_HEIGHT = 40;
 
 export const Game: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  // Horse state
-  const [horse, setHorse] = useState({
-    position: { x: 50 }, // Horizontal position only
-    speed: 5,
-  });
 
   // Refs for animation
   const backgroundXRef = useRef(0); // Background position
   const horseYRef = useRef(GAME_HEIGHT - HORSE_HEIGHT - 10); // Horse's vertical position
   const isJumpingRef = useRef(false); // Track if the horse is mid-jump
-
-  // Keypress handler
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      switch (e.key) {
-        case "Space":
-        case " ":
-          jump();
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, []);
+  const obstaclesRef = useRef<{ x: number; y: number }[]>([]); // Track obstacles
 
   // Jump logic
   const jump = () => {
@@ -45,7 +27,7 @@ export const Game: React.FC = () => {
 
     const originalY = GAME_HEIGHT - HORSE_HEIGHT - 10; // Ground position
     let velocity = -9; // Initial upward velocity
-    const gravity = 0.6; // Gravity pulling down
+    const gravity = 0.5; // Gravity pulling down
 
     const jumpInterval = setInterval(() => {
       horseYRef.current += velocity;
@@ -68,11 +50,13 @@ export const Game: React.FC = () => {
     const background = new Image();
     background.src = backgroundImage;
 
-    const horseImageNormalSprite = new Image();
-    horseImageNormalSprite.src = horseImageNormal;
+    const horseImage = new Image(); // Load the horse image
+    horseImage.src = horseImageSrc;
 
-    const horseImageJumpSprite = new Image();
-    horseImageJumpSprite.src = horseImageJump;
+    const hurdleImage = new Image(); // Load the hurdle image
+    hurdleImage.src = hurdleImageSrc;
+
+    let frameCount = 0; // Track frames for obstacle spawning
 
     const gameLoop = () => {
       if (ctx && canvas) {
@@ -93,7 +77,6 @@ export const Game: React.FC = () => {
           GAME_WIDTH,
           GAME_HEIGHT
         );
-
         ctx.drawImage(
           background,
           backgroundXRef.current + GAME_WIDTH,
@@ -104,13 +87,41 @@ export const Game: React.FC = () => {
 
         // Draw the horse
         ctx.drawImage(
-          isJumpingRef.current ? horseImageJumpSprite : horseImageNormalSprite,
-
-          horse.position.x,
+          horseImage,
+          50, // Fixed horizontal position for the horse
           horseYRef.current, // Use ref-based y position
           HORSE_WIDTH,
           HORSE_HEIGHT
         );
+
+        // Handle obstacle spawning
+        if (frameCount % 120 === 0) {
+          // Spawn a new obstacle every 120 frames (~2 seconds at 60 FPS)
+          obstaclesRef.current.push({
+            x: GAME_WIDTH,
+            y: GAME_HEIGHT - HURDLE_HEIGHT - 10, // Ground position
+          });
+        }
+
+        // Move and draw obstacles
+        obstaclesRef.current = obstaclesRef.current.filter((obstacle) => {
+          // Move the obstacle to the left
+          obstacle.x -= 3;
+
+          // Draw the obstacle
+          ctx.drawImage(
+            hurdleImage,
+            obstacle.x,
+            obstacle.y,
+            HURDLE_WIDTH,
+            HURDLE_HEIGHT
+          );
+
+          // Remove the obstacle if it goes off-screen
+          return obstacle.x + HURDLE_WIDTH > 0;
+        });
+
+        frameCount++; // Increment the frame count
       }
 
       // Request the next frame
@@ -121,6 +132,17 @@ export const Game: React.FC = () => {
 
     return () => cancelAnimationFrame(animationId); // Clean up on unmount
   }, []); // Empty dependency array to ensure one-time setup
+
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === "Space" || e.key === " ") {
+        jump();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, []);
 
   return (
     <div className="game-container">
