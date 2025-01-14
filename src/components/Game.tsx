@@ -16,7 +16,6 @@ const HURDLE_HEIGHT = 70;
 const MIN_HURDLE_DISTANCE = 175;
 const BACKGROUND_MOVE_SPEED = 3;
 
-// Hurdle colors to detect
 const RED_HURDLE_COLOR = { r: 238, g: 22, b: 25 };
 const YELLOW_HURDLE_COLOR = { r: 255, g: 240, b: 0 };
 const COLOR_TOLERANCE = 10;
@@ -24,7 +23,7 @@ const COLOR_TOLERANCE = 10;
 export const Game: React.FC = () => {
   const SPRITE_SWITCH_INTERVAL = 150;
   const [currentRunningSprite, setCurrentRunningSprite] = useState(0);
-  const [score, setScore] = useState(0); // Score state
+  const [score, setScore] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const backgroundXRef = useRef(0);
@@ -34,6 +33,15 @@ export const Game: React.FC = () => {
     { x: number; y: number; image: HTMLImageElement }[]
   >([]);
   const [gameOver, setGameOver] = useState(false);
+
+  const restartGame = () => {
+    setScore(0);
+    setGameOver(false);
+    horseYRef.current = GAME_HEIGHT - HORSE_HEIGHT - 10;
+    obstaclesRef.current = [];
+    backgroundXRef.current = 0;
+    isJumpingRef.current = false;
+  };
 
   const colorsMatch = (
     r1: number,
@@ -51,10 +59,9 @@ export const Game: React.FC = () => {
   };
 
   const detectColorCollision = (ctx: CanvasRenderingContext2D): boolean => {
-    const horseX = 50; // Horse's fixed x-position
+    const horseX = 50;
     const horseY = horseYRef.current;
 
-    // Get the image data for the horse's area
     const imageData = ctx.getImageData(
       horseX,
       horseY,
@@ -63,13 +70,11 @@ export const Game: React.FC = () => {
     );
     const { data } = imageData;
 
-    // Loop through pixels in the horse's area
     for (let i = 0; i < data.length; i += 4) {
-      const r = data[i]; // Red
-      const g = data[i + 1]; // Green
-      const b = data[i + 2]; // Blue
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
 
-      // Check against hurdle colors
       if (
         colorsMatch(
           r,
@@ -88,11 +93,11 @@ export const Game: React.FC = () => {
           YELLOW_HURDLE_COLOR.b
         )
       ) {
-        return true; // Collision detected
+        return true;
       }
     }
 
-    return false; // No collision detected
+    return false;
   };
 
   const jump = () => {
@@ -100,8 +105,8 @@ export const Game: React.FC = () => {
     isJumpingRef.current = true;
 
     const originalY = GAME_HEIGHT - HORSE_HEIGHT - 10;
-    let velocity = -10; // initial jump velocity
-    const gravity = 0.5; // gravity force
+    let velocity = -10;
+    const gravity = 0.5;
 
     const jumpInterval = setInterval(() => {
       horseYRef.current += velocity;
@@ -116,19 +121,19 @@ export const Game: React.FC = () => {
   };
 
   useEffect(() => {
-    if (gameOver) return; // Stop setting up the interval if the game is over
+    if (gameOver) return;
 
     const scoreInterval = setInterval(() => {
       setScore((prevScore) => prevScore + 1);
-    }, 75); // Increment score every 75ms
+    }, 75);
 
     return () => {
-      clearInterval(scoreInterval); // Clear interval on cleanup
+      clearInterval(scoreInterval);
     };
-  }, [gameOver]); // Re-run this effect whenever `gameOver` changes
+  }, [gameOver]);
 
   useEffect(() => {
-    if (gameOver) return; // Stop sprite alternation if the game is over
+    if (gameOver) return;
 
     const spriteInterval = setInterval(() => {
       if (!isJumpingRef.current) {
@@ -136,8 +141,8 @@ export const Game: React.FC = () => {
       }
     }, SPRITE_SWITCH_INTERVAL);
 
-    return () => clearInterval(spriteInterval); // Clear interval on cleanup
-  }, [gameOver]); // Re-run when `gameOver` changes
+    return () => clearInterval(spriteInterval);
+  }, [gameOver]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -161,16 +166,8 @@ export const Game: React.FC = () => {
     const hurdleImage2 = new Image();
     hurdleImage2.src = hurdleImageSrc2;
 
-    // Set up sprite alternation interval
-    const spriteInterval = setInterval(() => {
-      if (!isJumpingRef.current && !gameOver) {
-        setCurrentRunningSprite((prev) => (prev === 0 ? 1 : 0));
-      }
-    }, SPRITE_SWITCH_INTERVAL);
-
     const gameLoop = () => {
       if (ctx && canvas) {
-        // Stop the game loop if game over
         if (gameOver) {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           ctx.fillStyle = "black";
@@ -184,16 +181,20 @@ export const Game: React.FC = () => {
             GAME_HEIGHT / 2 + 50
           );
 
+          ctx.fillStyle = "white";
+          ctx.fillRect(GAME_WIDTH / 2 - 100, GAME_HEIGHT / 2 + 80, 200, 50);
+          ctx.fillStyle = "black";
+          ctx.font = "24px Arial";
+          ctx.fillText("Restart", GAME_WIDTH / 2, GAME_HEIGHT / 2 + 115);
+
           if (animationFrameRef.current) {
             cancelAnimationFrame(animationFrameRef.current);
           }
           return;
         }
 
-        // Clear the canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Update background position
         backgroundXRef.current -= BACKGROUND_MOVE_SPEED;
         if (backgroundXRef.current <= -GAME_WIDTH) {
           backgroundXRef.current = 0;
@@ -205,7 +206,6 @@ export const Game: React.FC = () => {
           ? horseImageNormalSprite
           : horseImageNormalSprite2;
 
-        // Draw the background
         ctx.drawImage(
           background,
           backgroundXRef.current,
@@ -221,7 +221,6 @@ export const Game: React.FC = () => {
           GAME_HEIGHT
         );
 
-        // Draw the horse
         ctx.drawImage(
           currentSprite,
           50,
@@ -230,7 +229,6 @@ export const Game: React.FC = () => {
           HORSE_HEIGHT
         );
 
-        // Random hurdle spawning
         if (Math.random() < 0.02) {
           const lastObstacle =
             obstaclesRef.current[obstaclesRef.current.length - 1];
@@ -248,7 +246,6 @@ export const Game: React.FC = () => {
           }
         }
 
-        // Move and draw obstacles
         obstaclesRef.current = obstaclesRef.current.filter((obstacle) => {
           obstacle.x -= BACKGROUND_MOVE_SPEED;
 
@@ -263,28 +260,46 @@ export const Game: React.FC = () => {
           return obstacle.x + HURDLE_WIDTH > 0;
         });
 
-        // Draw the score
         ctx.fillStyle = "black";
         ctx.font = "24px Arial";
+        ctx.textAlign = "left"; // Ensure score label position consistency
         ctx.fillText(`Score: ${score}`, 10, 30);
 
-        // Check for color collision
         if (detectColorCollision(ctx)) {
           setGameOver(true);
-          return; // Stop further game processing
+          return;
         }
       }
 
       animationFrameRef.current = requestAnimationFrame(gameLoop);
     };
 
+    const handleRestartClick = (e: MouseEvent) => {
+      if (!gameOver) return;
+
+      const canvasRect = canvas?.getBoundingClientRect();
+      const x = e.clientX - (canvasRect?.left || 0);
+      const y = e.clientY - (canvasRect?.top || 0);
+
+      if (
+        x >= GAME_WIDTH / 2 - 100 &&
+        x <= GAME_WIDTH / 2 + 100 &&
+        y >= GAME_HEIGHT / 2 + 80 &&
+        y <= GAME_HEIGHT / 2 + 130
+      ) {
+        restartGame();
+      }
+    };
+
     animationFrameRef.current = requestAnimationFrame(gameLoop);
+
+    canvas?.addEventListener("click", handleRestartClick);
 
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      clearInterval(spriteInterval);
+      canvas?.removeEventListener("click", handleRestartClick);
     };
   }, [gameOver, currentRunningSprite, score]);
 
