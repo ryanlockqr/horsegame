@@ -17,6 +17,7 @@ import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import { fetchUserAttributes } from "aws-amplify/auth";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import React from "react";
@@ -25,7 +26,6 @@ import { DevMenu } from "./components/DevMenu";
 import { Header } from "./components/HeaderComponents/Header";
 import { Settings } from "./components/Settings";
 import { HighScores } from "./components/HighScores";
-import { Help } from "./components/Help";
 import { Profile } from "./components/Profile";
 
 import { UserProvider } from "./utils/UserContext";
@@ -131,7 +131,6 @@ export default function App() {
             <Routes>
               <Route path="/play" element={<Game />} />
               <Route path="/settings" element={<Settings />} />
-              <Route path="/help" element={<Help />} />
               <Route path="/high-scores" element={<HighScores />} />
               <Route path="/dev-menu" element={<DevMenu />} />
               <Route path="/profile" element={<Profile />} />

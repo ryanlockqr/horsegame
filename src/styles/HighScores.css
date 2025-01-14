@@ -1,0 +1,20 @@
+#high-scores-component {
+  display: flex;
+  flex-direction: column;
+  background: lightblue;
+
+  border-radius: 15px;
+
+  #phase1 {
+  }
+
+  #phase2 {
+    display: flex;
+    flex-direction: row;
+    /* align-items: end; */
+    justify-content: end;
+  }
+
+  #phase3 {
+  }
+}
