@@ -2,10 +2,12 @@ import React from "react";
 import "../../styles/HeaderStyles/ProfileStyles.css";
 import { NavLink } from "react-router-dom";
 import { defaultUser, useUser } from "../../utils/UserContext";
+import { useTranslation } from "react-i18next";
 
 export const ProfileHamburger: React.FC = () => {
   const [isHovered, setIsHovered] = React.useState(false);
   const { user, setUser } = useUser();
+  const { t } = useTranslation();
   return (
     <div
       id="profile"
@@ -21,20 +23,20 @@ export const ProfileHamburger: React.FC = () => {
         <div id="profile-hover">
           {user.isLoggedIn && (
             <div id="profile-hover-content-username">
-              <span>Logged in: {user.username}</span>
+              <span>{t("header.profile.logged-in-as", { name: user.username })}</span>
             </div>
           )}
           {user.isLoggedIn && (
             <div id="profile-hover-content-logout">
-              <span onClick={() => setUser(defaultUser)}>Logout</span>
+              <span onClick={() => setUser(defaultUser)}>{t("common.sign-out")}</span>
             </div>
           )}
           {!user.isLoggedIn && (
             <div id="profile-hover-content-login">
               <span>
-                You are not logged in.{" "}
+                {t("header.profile.not-logged-in-reminder")}{" "}
                 <NavLink to="/profile">
-                  <u>(Login)</u>
+                  <u>({t("header.profile.log-in")})</u>
                 </NavLink>
               </span>
             </div>

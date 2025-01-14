@@ -4,14 +4,13 @@ import { useTranslation } from "react-i18next";
 import { defaultUser, useUser } from "../utils/UserContext";
 
 type UsernameErrorCheckResult = {
-  e: string | null /* error message */;
+  e: string /* error message */;
   error: boolean /* whether or not there was an error */;
 };
 
 export const Profile: React.FC = () => {
   const { t } = useTranslation();
-  const { user, setUser, setLoggedIn, updateProfilePicture, updateUsername } =
-    useUser();
+  const { user, setUser, updateProfilePicture, updateUsername } = useUser();
 
   /* state for component to know when to show the username change box */
   const [usernameChangeInProgress, setUsernameChangeInProgress] =
@@ -29,14 +28,18 @@ export const Profile: React.FC = () => {
     return (
       <div id="profile-component-guest">
         <img id="profile-picture" src="defaultUser.jpg"></img>
-        <span>{t("Hello")}, Guest!</span>
+        <span>{t("profile.user-page-greeting", { name: "Guest" })}</span>
         <button>
-          <span onClick={() => setUserLoggingIn(true)}>Sign In</span>
+          <span onClick={() => setUserLoggingIn(true)}>
+            {t("common.sign-in")}
+          </span>
         </button>
         {userLoggingIn && (
           <div id="login-box">
             <textarea id="username" placeholder="Username"></textarea>
-            <button onClick={() => handleLoginRequest()}>Submit</button>
+            <button onClick={() => handleLoginRequest()}>
+              {t("profile.submit")}
+            </button>
           </div>
         )}
       </div>
@@ -49,7 +52,7 @@ export const Profile: React.FC = () => {
     ).value;
     let res = validateUsername(newUsername);
     if (res.error) {
-      alert(res.e);
+      alert(t(res.e));
       return;
     }
     setUserLoggingIn(false);
@@ -74,24 +77,24 @@ export const Profile: React.FC = () => {
   /* prevent RCE, SQL injection, XSS, racism, profanity, etc. */
   function validateUsername(newUsername: string): UsernameErrorCheckResult {
     let res: UsernameErrorCheckResult = {
-      e: null,
+      e: "",
       error: false,
     };
 
     if (!usernameRegex.test(newUsername)) {
-      res.e = "Usernames can only contain letters and numbers! No spaces!";
+      res.e = "profile.errors.invalid";
       res.error = true;
       return res;
     }
 
     if (newUsername === user.username) {
-      res.e = "You're already using that username!";
+      res.e = "profile.errors.dupe";
       res.error = true;
       return res;
     }
 
     if (newUsername.length < 3) {
-      res.e = "Usernames must be at least 3 characters long!";
+      res.e = "profile.errors.short";
       res.error = true;
       return res;
     }
@@ -120,7 +123,9 @@ export const Profile: React.FC = () => {
 
       const err = handleUsernameChangeRequest(newUsername);
       if (err) {
-        alert(err);
+        console.log(err);
+        console.log(t(err));
+        alert(t(err));
         return;
       }
       changeUsername(newUsername);
@@ -135,17 +140,19 @@ export const Profile: React.FC = () => {
   return (
     <div id="profile-component">
       <div id="sign-out-button">
-        <button onClick={() => setUser(defaultUser)}>{t("sign-out")}</button>
+        <button onClick={() => setUser(defaultUser)}>
+          {t("common.sign-out")}
+        </button>
       </div>
       <img id="profile-picture" src={user.profilePicture}></img>
-      <span>{t("user-page-greeting", { name: user.username })}</span>
+      <span>{t("profile.user-page-greeting", { name: user.username })}</span>
 
       <div id="user-change-detail-buttons-container">
         <button onClick={showUsernameChange}>
-          <span>Change username</span>
+          <span>{t("profile.change-username")}</span>
         </button>
         <button onClick={showPFPChange}>
-          <span>Change profile picture</span>
+          <span>{t("profile.change-pfp")}</span>
         </button>
       </div>
 
@@ -159,12 +166,12 @@ export const Profile: React.FC = () => {
 
           {pfpChangeInProgress && (
             <div>
-              <button>Upload</button>
+              <button>{t("profile.upload")}</button>
             </div>
           )}
 
           <button onClick={submitNewDetails}>
-            <span>Submit</span>
+            <span>{t("profile.submit")}</span>
           </button>
 
           <button
@@ -173,7 +180,7 @@ export const Profile: React.FC = () => {
               setPfpChangeInProgress(false);
             }}
           >
-            <span>Cancel</span>
+            <span>{t("profile.cancel")}</span>
           </button>
         </div>
       )}

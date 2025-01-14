@@ -5,6 +5,7 @@ import { getUrl } from "aws-amplify/storage";
 import outputs from "../../amplify_outputs.json";
 
 import "../styles/HighScores.css";
+import { useTranslation } from "react-i18next";
 
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
@@ -17,6 +18,7 @@ const client = generateClient({
 export const HighScores: React.FC = () => {
   const [waitingForData, setWaitingForData] = React.useState(false);
   const [scores, setScores] = React.useState<any[]>([]);
+  const [t] = useTranslation();
 
   async function getHighScores() {
     setWaitingForData(true);
@@ -38,20 +40,20 @@ export const HighScores: React.FC = () => {
   return (
     <div id="high-scores-component">
       <div id="phase1">
-        <h1>High Scores</h1>
+        <h1>{t("high-scores.title")}</h1>
       </div>
       <div id="phase2">
         <button onClick={getHighScores} disabled={waitingForData}>
-          {!waitingForData && <span>Refresh</span>}
-          {waitingForData && <span>wait</span>}
+          {!waitingForData && <span>{t("high-scores.refresh")}</span>}
+          {waitingForData && <span>TODO MUI</span>}
         </button>
       </div>
       <div id="phase3">
         <table>
           <tr>
-            <th>User</th>
-            <th>Score</th>
-            <th>Date</th>
+            <th>{t("high-scores.user")}</th>
+            <th>{t("high-scores.score")}</th>
+            <th>{t("high-scores.date")}</th>
           </tr>
           {scores.map((score: any) => {
             return (

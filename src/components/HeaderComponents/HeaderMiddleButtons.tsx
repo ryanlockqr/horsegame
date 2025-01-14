@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import "../../styles/HeaderStyles/Header.css";
 
-const BUTTONS = ["header.play", "header.settings", "header.help"];
+const BUTTONS = ["header.play", "header.settings", ];
 const BUTTONS_DEV = ["header.high-scores", "header.dev-menu"];
 
 const DEV =
