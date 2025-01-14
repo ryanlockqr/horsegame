@@ -116,16 +116,28 @@ export const Game: React.FC = () => {
   };
 
   useEffect(() => {
+    if (gameOver) return; // Stop setting up the interval if the game is over
+
     const scoreInterval = setInterval(() => {
-      if (!gameOver) {
-        setScore((prevScore) => prevScore + 1);
-      }
-    }, 200); // Increment score every 200ms
+      setScore((prevScore) => prevScore + 1);
+    }, 75); // Increment score every 75ms
 
     return () => {
       clearInterval(scoreInterval); // Clear interval on cleanup
     };
-  }, []); // Run only once
+  }, [gameOver]); // Re-run this effect whenever `gameOver` changes
+
+  useEffect(() => {
+    if (gameOver) return; // Stop sprite alternation if the game is over
+
+    const spriteInterval = setInterval(() => {
+      if (!isJumpingRef.current) {
+        setCurrentRunningSprite((prev) => (prev === 0 ? 1 : 0));
+      }
+    }, SPRITE_SWITCH_INTERVAL);
+
+    return () => clearInterval(spriteInterval); // Clear interval on cleanup
+  }, [gameOver]); // Re-run when `gameOver` changes
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -165,6 +177,12 @@ export const Game: React.FC = () => {
           ctx.font = "48px Arial";
           ctx.textAlign = "center";
           ctx.fillText("Game Over", GAME_WIDTH / 2, GAME_HEIGHT / 2);
+          ctx.font = "32px Arial";
+          ctx.fillText(
+            `Final Score: ${score}`,
+            GAME_WIDTH / 2,
+            GAME_HEIGHT / 2 + 50
+          );
 
           if (animationFrameRef.current) {
             cancelAnimationFrame(animationFrameRef.current);
