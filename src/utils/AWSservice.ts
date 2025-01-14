@@ -1,3 +1,64 @@
+import {createContext, useContext, useState, useEffect, ReactNode} from 'react';
+import {S3Client, ListObjectsCommand} from '@aws-sdk/client-s3';
+
+interface S3ContextType {
+    objects: any[];
+    isLoading: boolean;
+    error: Error | null;
+    refreshObjects: () => Promise<void>;
+}
+
+const S3Context = createContext<S3ContextType | undefined>(undefined);
+
+export function S3Provider({ children }: { children: ReactNode }) {
+    const [objects, setObjects] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
+
+    const s3Client = new S3Client({
+        region: 'us-east-1',
+        credentials: {
+            accessKeyId: '<YOUR_AwsAccessKey_HERE>',
+            secretAccessKey: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
+        },
+        endpoint: 'XXXXXXXXXXXXXXXXXXXXXXXX',
+        forcePathStyle: true,
+    });
+
+    const fetchObjects = async () => {
+        try {
+            const command = new ListObjectsCommand({
+                Bucket: 'XXXXXXXXXX',
+                Prefix: 'profile_pictures/',
+            });
+            const response = await s3Client.send(command);
+            setObjects(response.Contents || []);
+            setIsLoading(false);
+        } catch (err) {
+            setError(err as Error);
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchObjects();
+    }, []);
+
+    const refreshObjects = async () => {
+        setIsLoading(true);
+        await fetchObjects();
+    };
+
+    return (
+        <S3Context.Provider value={{ objects, isLoading, error, refreshObjects }}>
+            {children}
+        </S3Context.Provider>
+    );
+}
+
+
+
+/**
 import { useState, useEffect } from "react";
 import {
   Authenticator,
@@ -17,21 +78,8 @@ import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import { fetchUserAttributes } from "aws-amplify/auth";
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 import React from "react";
-import { Game } from "./components/Game";
-import { DevMenu } from "./components/DevMenu";
-import { Header } from "./components/HeaderComponents/Header";
-import { Settings } from "./components/Settings";
-import { HighScores } from "./components/HighScores";
-import { Profile } from "./components/Profile";
-
-import { UserProvider } from "./utils/UserContext";
-import "./styles/app.css";
-
-import "./utils/i18n";
 
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
@@ -39,7 +87,7 @@ import "./utils/i18n";
 
 Amplify.configure(outputs);
 const client = generateClient({
-  authMode: "userPool",
+  authMode: "apiKey",
 });
 
 export default function App() {
@@ -50,13 +98,12 @@ export default function App() {
   }, []);
 
   async function fetchNotes() {
-    const { data: notes } = await client.models.Note.list();
+    const { data: scores } = await client.models.scoreEntry.list();
     await Promise.all(
-      notes.map(async (note) => {
+      scores.map(async (note) => {
         if (note.image) {
           const linkToStorageFile = await getUrl({
-            path: ({ identityId }) =>
-              `profile_pictures/${identityId}/profile_pic.jpg`,
+            path: `profile_pictures/${note.name}/profile_pic.jpg`,
           });
           console.log(linkToStorageFile.url);
           note.image = linkToStorageFile.url;
@@ -64,7 +111,7 @@ export default function App() {
         return note;
       })
     );
-    setNotes(notes);
+    setNotes(scores);
   }
 
   async function createNote(event) {
@@ -81,12 +128,13 @@ export default function App() {
       alert("Please select an image file.");
       return;
     }
+    const userAttributes = await fetchUserAttributes();
+    const email = userAttributes.email; // Access email attribute
 
     try {
       // Upload the image to S3
       uploadData({
-        path: ({ identityId }) =>
-          `profile_pictures/${identityId}/profile_pic.jpg`,
+        path: `profile_pictures/${email}/profile_pic.jpg`,
         data: file,
       });
 
@@ -103,16 +151,10 @@ export default function App() {
       const userAttributes = await fetchUserAttributes();
       const email = userAttributes.email; // Access email attribute
 
-      // Fetch profile picture URL from storage
-      const profilePicUrl = await getUrl({
-        path: ({ identityId }) =>
-          `profile_pictures/${identityId}/profile_pic.jpg`,
-      });
-
       // Store highscore in the database
-      const { data: newHighscore } = await client.models.Note.create({
+      const { data: newHighscore } = await client.models.scoreEntry.create({
         name: email, // Storing email as username
-        description: highscore,
+        score: highscore,
         image: profilePicUrl,
       });
 
@@ -123,34 +165,6 @@ export default function App() {
   }
 
   return (
-    <div className="App">
-      <Authenticator>
-        <UserProvider>
-          <BrowserRouter>
-            <Header />
-            <Routes>
-              <Route path="/play" element={<Game />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/high-scores" element={<HighScores />} />
-              <Route path="/dev-menu" element={<DevMenu />} />
-              <Route path="/profile" element={<Profile />} />
-            </Routes>
-            <p style={{ backgroundColor: "black" }}>
-              TODO <br />
-              facilitate pfp upload
-              <br /> high scores
-              <br />
-              settings
-              <br />
-              dev menu <br />
-              language dropdown
-              <br />
-            </p>
-          </BrowserRouter>
-        </UserProvider>
-      </Authenticator>
-    </div>
-    /**
     <Authenticator>
       {({ signOut }) => (
         <Flex
@@ -175,6 +189,7 @@ export default function App() {
             </Flex>
           </View>
           <Divider />
+
           <Heading level={2}>Current Notes</Heading>
           <Grid
             margin="3rem 0"
@@ -209,6 +224,7 @@ export default function App() {
               </Flex>
             ))}
           </Grid>
+
           <View as="form" onSubmit={uploadProfilePicture}>
             <TextField
               label="Upload Profile Picture"
@@ -222,6 +238,6 @@ export default function App() {
           <Button onClick={signOut}>Sign Out</Button>
         </Flex>
       )}
-    </Authenticator>**/
+    </Authenticator>
   );
 }
