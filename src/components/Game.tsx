@@ -19,11 +19,12 @@ const BACKGROUND_MOVE_SPEED = 3;
 // Hurdle colors to detect
 const RED_HURDLE_COLOR = { r: 238, g: 22, b: 25 };
 const YELLOW_HURDLE_COLOR = { r: 255, g: 240, b: 0 };
-const COLOR_TOLERANCE = 10; // allow
+const COLOR_TOLERANCE = 10;
 
 export const Game: React.FC = () => {
   const SPRITE_SWITCH_INTERVAL = 150;
   const [currentRunningSprite, setCurrentRunningSprite] = useState(0);
+  const [score, setScore] = useState(0); // Score state
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const backgroundXRef = useRef(0);
@@ -113,6 +114,18 @@ export const Game: React.FC = () => {
       }
     }, 20);
   };
+
+  useEffect(() => {
+    const scoreInterval = setInterval(() => {
+      if (!gameOver) {
+        setScore((prevScore) => prevScore + 1);
+      }
+    }, 200); // Increment score every 200ms
+
+    return () => {
+      clearInterval(scoreInterval); // Clear interval on cleanup
+    };
+  }, []); // Run only once
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -232,6 +245,11 @@ export const Game: React.FC = () => {
           return obstacle.x + HURDLE_WIDTH > 0;
         });
 
+        // Draw the score
+        ctx.fillStyle = "black";
+        ctx.font = "24px Arial";
+        ctx.fillText(`Score: ${score}`, 10, 30);
+
         // Check for color collision
         if (detectColorCollision(ctx)) {
           setGameOver(true);
@@ -250,7 +268,7 @@ export const Game: React.FC = () => {
       }
       clearInterval(spriteInterval);
     };
-  }, [gameOver, currentRunningSprite]);
+  }, [gameOver, currentRunningSprite, score]);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
