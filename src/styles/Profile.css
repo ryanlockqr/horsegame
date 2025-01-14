@@ -22,6 +22,10 @@
       height: 30px;
     }
   }
+
+  button {
+    cursor: pointer;
+  }
 }
 #profile-picture {
   width: 150px;
@@ -44,6 +48,10 @@
   width: 90%;
   min-height: 40%;
   height: max-content;
+
+  button {
+    cursor: pointer;
+  }
 
   #user-change-detail-buttons-container {
     display: flex;

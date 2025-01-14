@@ -144,7 +144,6 @@ export default function App() {
               <br />
               settings
               <br />
-              help <br />
               dev menu <br />
               hamburger menu <br />
               language dropdown

@@ -1,38 +1,44 @@
 import React from "react";
 import "../../styles/HeaderStyles/ProfileStyles.css";
 import { NavLink } from "react-router-dom";
-import { useUser } from "../../utils/UserContext";
+import { defaultUser, useUser } from "../../utils/UserContext";
 
 export const ProfileHamburger: React.FC = () => {
   const [isHovered, setIsHovered] = React.useState(false);
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   return (
     <div
       id="profile"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {user.isLoggedIn && (
-        <span className="logged-in-reminder">
-          Logged in as: {user.username}
-        </span>
-      )}
-      {!user.isLoggedIn && (
-        <span className="logged-in-reminder">You are not logged in</span>
-      )}
-      <NavLink to="/profile">
-        <img src={user.profilePicture} alt="pp" />
-      </NavLink>
+      <div id="always-visible">
+        <NavLink to="/profile">
+          <img src={user.profilePicture} alt="pp" />
+        </NavLink>
+      </div>
       {isHovered && (
         <div id="profile-hover">
-          <div id="profile-hover-content">
+          {user.isLoggedIn && (
             <div id="profile-hover-content-username">
-              <span>Logged in as: {user.username}</span>
+              <span>Logged in: {user.username}</span>
             </div>
+          )}
+          {user.isLoggedIn && (
             <div id="profile-hover-content-logout">
-              <span>Logout</span>
+              <span onClick={() => setUser(defaultUser)}>Logout</span>
             </div>
-          </div>
+          )}
+          {!user.isLoggedIn && (
+            <div id="profile-hover-content-login">
+              <span>
+                You are not logged in.{" "}
+                <NavLink to="/profile">
+                  <u>(Login)</u>
+                </NavLink>
+              </span>
+            </div>
+          )}
         </div>
       )}
     </div>
