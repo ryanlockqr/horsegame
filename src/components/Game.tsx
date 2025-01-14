@@ -22,7 +22,7 @@ const YELLOW_HURDLE_COLOR = { r: 255, g: 240, b: 0 };
 const COLOR_TOLERANCE = 10; // allow
 
 export const Game: React.FC = () => {
-  const SPRITE_SWITCH_INTERVAL = 200;
+  const SPRITE_SWITCH_INTERVAL = 150;
   const [currentRunningSprite, setCurrentRunningSprite] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number | null>(null);
