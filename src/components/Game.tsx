@@ -180,7 +180,7 @@ export const Game: React.FC = () => {
       const newHighscore = {
         name: email, // Storing email as username
         description: highscore,
-        image: profilePicUrl,
+        image: true,
         username: user.username == "" ? "Anonymous" : user.username,
       };
       console.log(newHighscore);
