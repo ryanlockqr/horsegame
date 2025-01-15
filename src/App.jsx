@@ -29,7 +29,7 @@ import { Profile } from "./components/Profile";
 import { Navigate } from "react-router-dom";
 
 import { UserProvider } from "./utils/UserContext";
-import "./styles/app.css";
+import "./styles/App.css";
 
 import "./utils/i18n";
 
