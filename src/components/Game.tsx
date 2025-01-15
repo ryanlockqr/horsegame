@@ -170,12 +170,6 @@ export const Game: React.FC = () => {
       const userAttributes = await fetchUserAttributes();
       const email = userAttributes.email; // Access email attribute
 
-      // Fetch profile picture URL from storage
-      const profilePicUrl = await getUrl({
-        path: ({ identityId }) =>
-          `profile_pictures/${identityId}/profile_pic.jpg`,
-      });
-
       // Store highscore in the database
       const newHighscore = {
         name: email, // Storing email as username
