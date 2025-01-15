@@ -123,13 +123,6 @@ export default function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="*" element={<Navigate to="/play" replace />} />
             </Routes>
-            <p style={{ backgroundColor: "black" }}>
-              TODO
-              <br />
-              facilitate pfp upload
-              <br />
-              send HighScores to backend
-            </p>
           </BrowserRouter>
         </UserProvider>
       </Authenticator>
