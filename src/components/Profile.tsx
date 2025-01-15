@@ -3,6 +3,7 @@ import "../styles/Profile.css";
 import { useTranslation } from "react-i18next";
 import { defaultUser, useUser } from "../utils/UserContext";
 import naughtyWords from "naughty-words";
+import { signOut } from "aws-amplify/Auth";
 
 type UsernameErrorCheckResult = {
   e: string /* error message */;
@@ -159,7 +160,10 @@ export const Profile: React.FC = () => {
   return (
     <div id="profile-component">
       <div id="sign-out-button">
-        <button onClick={() => setUser(defaultUser)}>
+        <button onClick={() => {
+                  setUser(defaultUser);
+                  signOut();
+                }}>
           {t("common.sign-out")}
         </button>
       </div>
