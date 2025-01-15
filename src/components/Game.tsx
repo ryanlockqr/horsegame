@@ -173,7 +173,7 @@ export const Game: React.FC = () => {
         description: highscore,
         image: true,
         username: user.username == "" ? "Anonymous" : user.username,
-      };
+      });
       console.log(newHighscore);
 
       console.log("Highscore stored successfully:", newHighscore);
