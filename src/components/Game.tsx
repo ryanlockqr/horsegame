@@ -177,11 +177,6 @@ export const Game: React.FC = () => {
         username: user.username == "" ? "Anonymous" : user.username,
       };
       console.log(newHighscore);
-      const { data: newHighscore2 } = await client.models.Note.create(
-        newHighscore
-      );
-
-      console.log(newHighscore);
 
       console.log("Highscore stored successfully:", newHighscore);
     } catch (error) {
