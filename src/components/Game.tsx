@@ -15,9 +15,10 @@ import { fetchUserAttributes } from "aws-amplify/auth";
 import { Amplify } from "aws-amplify";
 import outputs from "../../amplify_outputs.json";
 import { generateClient } from "aws-amplify/data";
+import { type Schema } from "../../amplify/data/resource";
 
 Amplify.configure(outputs);
-const client = generateClient();
+const client = generateClient<Schema>();
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 400;
@@ -32,17 +33,19 @@ const RED_HURDLE_COLOR = { r: 238, g: 22, b: 25 };
 const YELLOW_HURDLE_COLOR = { r: 255, g: 240, b: 0 };
 const COLOR_TOLERANCE = 10;
 
-export const Game = () => {
+export const Game: React.FC = () => {
   const SPRITE_SWITCH_INTERVAL = 150;
   const [currentRunningSprite, setCurrentRunningSprite] = useState(0);
   const [score, setScore] = useState(0);
-  const canvasRef = useRef < HTMLCanvasElement > null;
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const animationFrameRef = (useRef < number) | (null > null);
+  const animationFrameRef = useRef<number | null>(null);
   const backgroundXRef = useRef(0);
   const horseYRef = useRef(GAME_HEIGHT - HORSE_HEIGHT - 10);
   const isJumpingRef = useRef(false); // checks if horse is jumping
-  const obstaclesRef = useRef([]); // list of hurdles on the canvas
+  const obstaclesRef = useRef<
+    { x: number; y: number; image: HTMLImageElement }[]
+  >([]); // list of hurdles on the canvas
   const [gameOver, setGameOver] = useState(false);
 
   const { user } = useUser();
@@ -78,7 +81,14 @@ export const Game = () => {
     isJumpingRef.current = false;
   };
 
-  const colorsMatch = (r1, g1, b1, r2, g2, b2) => {
+  const colorsMatch = (
+    r1: number,
+    g1: number,
+    b1: number,
+    r2: number,
+    g2: number,
+    b2: number
+  ) => {
     return (
       Math.abs(r1 - r2) <= COLOR_TOLERANCE &&
       Math.abs(g1 - g2) <= COLOR_TOLERANCE &&
@@ -87,7 +97,7 @@ export const Game = () => {
   };
 
   // Collision occurs when horse interacts with hurdle colours, not hurdle images
-  const detectColorCollision = (ctx) => {
+  const detectColorCollision = (ctx: CanvasRenderingContext2D): boolean => {
     const horseX = 50;
     const horseY = horseYRef.current;
 
@@ -150,7 +160,7 @@ export const Game = () => {
     }, 20);
   };
 
-  async function storeHighscore(highscore) {
+  async function storeHighscore(highscore: number) {
     try {
       // Fetch current user attributes
       const userAttributes = await fetchUserAttributes();
@@ -159,8 +169,8 @@ export const Game = () => {
       // Store highscore in the database
       const newHighscore = {
         name: email, // Storing email as username
-        description: highscore,
-        image: true,
+        description: highscore.toString(),
+        image: "true",
         username: user.username == "" ? "Anonymous" : user.username,
       };
       console.log(newHighscore);
@@ -344,7 +354,7 @@ export const Game = () => {
     };
 
     // Onclick for restart button
-    const handleRestartClick = (e) => {
+    const handleRestartClick = (e: MouseEvent) => {
       if (!gameOver) return;
 
       const canvasRect = canvas?.getBoundingClientRect();
@@ -375,7 +385,7 @@ export const Game = () => {
 
   // Listens for spacebar input
   useEffect(() => {
-    const handleKeyPress = (e) => {
+    const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === "Space" || e.key === " ") {
         jump();
       }

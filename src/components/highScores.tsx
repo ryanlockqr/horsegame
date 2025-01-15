@@ -10,12 +10,14 @@ import "../styles/HighScores.css";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../utils/UserContext";
 
+import { Schema } from "../../amplify/data/resource";
+
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
  */
 
 Amplify.configure(outputs);
-const client = generateClient({
+const client = generateClient<Schema>({
   authMode: "apiKey",
 });
 export const HighScores: React.FC = () => {
