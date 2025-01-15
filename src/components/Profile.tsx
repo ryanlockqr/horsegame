@@ -3,7 +3,7 @@ import "../styles/Profile.css";
 import { useTranslation } from "react-i18next";
 import { defaultUser, useUser } from "../utils/UserContext";
 import naughtyWords from "naughty-words";
-import { signOut } from "aws-amplify/Auth";
+import { signOut } from "aws-amplify/auth";
 
 type UsernameErrorCheckResult = {
   e: string /* error message */;
