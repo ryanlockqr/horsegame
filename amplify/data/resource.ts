@@ -1,4 +1,4 @@
-import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
+import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -10,9 +10,10 @@ and "delete" any "Todo" records.
 const schema = a.schema({
   Note: a
     .model({
-      name:a.string(),
-      description: a.integer(),
+      name: a.string(),
+      description: a.string(),
       image: a.string(),
+      username: a.string(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
 });
@@ -29,8 +30,6 @@ export const data = defineData({
     },
   },
 });
-
-
 
 /*== STEP 2 ===============================================================
 Go to your frontend source code. From your client-side code, generate a
