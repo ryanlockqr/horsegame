@@ -143,15 +143,17 @@ export const Game: React.FC = () => {
   async function storeHighscore(highscore: number) {
     try {
       // Fetch current user attributes
-      const userAttributes = await fetchUserAttributes();
-      const email = userAttributes.email; // Access email attribute
+      if (!user.email) {
+        return;
+      }
+      const email = user.email; // Access email attribute
 
       // Store highscore in the database
       const newHighscore = {
         name: email, // Storing email as username
         description: highscore.toString(),
-        image: defaultUser.profilePicture,
-        username: user.username == "" ? "Anonymous" : user.username,
+        image: user.profilePicture || defaultUser.profilePicture,
+        username: user.username == "" ? user.username : defaultUser.email,
       };
       console.log(newHighscore);
       await client.models.Note.create(newHighscore);

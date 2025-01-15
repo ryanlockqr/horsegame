@@ -54,10 +54,10 @@ export default function App() {
     await Promise.all(
       notes.map(async (note) => {
         if (note.image) {
-          const linkToStorageFile = await getUrl({
+          /*const linkToStorageFile = await getUrl({
             path: `profile_pictures/${note.name}/profile_pic.jpg`,
           });
-          note.image = linkToStorageFile.url;
+          note.image = linkToStorageFile.url;*/
         }
         return note;
       })

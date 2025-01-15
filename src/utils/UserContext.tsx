@@ -1,9 +1,29 @@
+import {
+  fetchUserAttributes,
+  FetchUserAttributesOutput,
+} from "@aws-amplify/auth";
 import React, { createContext, useState, useContext } from "react";
+console.log("Fetching user attributes...");
 
+const amplifyCredentials: FetchUserAttributesOutput =
+  await fetchUserAttributes();
+
+console.log(amplifyCredentials);
 type User = {
   username: string;
   isLoggedIn: boolean;
   profilePicture: string;
+  email: string;
+};
+
+export const defaultUser: User = {
+  username: "AnonymousUser" + Math.floor(Math.random() * 1000),
+  isLoggedIn: false,
+  profilePicture: "defaultUser.jpg",
+  email:
+    amplifyCredentials.email_verified && amplifyCredentials.email
+      ? amplifyCredentials.email
+      : "",
 };
 
 type UserContextType = {
@@ -12,11 +32,6 @@ type UserContextType = {
   updateUsername: (username: string) => void;
   updateProfilePicture: (pictureUrl: string) => void;
   setLoggedIn: (status: boolean) => void;
-};
-export const defaultUser: User = {
-  username: "AnonymousUser" + Math.floor(Math.random() * 1000),
-  isLoggedIn: false,
-  profilePicture: "defaultUser.jpg",
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -28,13 +43,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User>(() => {
     try {
       const savedUser = localStorage.getItem("user");
-      return savedUser
-        ? JSON.parse(savedUser)
-        : {
-            username: "dylanPeney03",
-            isLoggedIn: true,
-            profilePicture: "defaultUser.jpg",
-          };
+      return savedUser ? JSON.parse(savedUser) : defaultUser;
     } catch (e) {
       localStorage.removeItem("user");
       return defaultUser;

@@ -29,7 +29,7 @@ export const Profile: React.FC = () => {
   if (!user.isLoggedIn) {
     return (
       <div id="profile-component-guest">
-        <img id="profile-picture" src="defaultUser.jpg"></img>
+        <img id="profile-picture" src={defaultUser.profilePicture}></img>
         <span>
           {t("profile.user-page-greeting", { name: defaultUser.username })}
         </span>
@@ -64,6 +64,7 @@ export const Profile: React.FC = () => {
       isLoggedIn: true,
       username: newUsername,
       profilePicture: "defaultUser.jpg",
+      email: user.email,
     });
   }
 

@@ -8,7 +8,7 @@ import { BeatLoader, RingLoader } from "react-spinners";
 
 import "../styles/HighScores.css";
 import { useTranslation } from "react-i18next";
-import { useUser } from "../utils/UserContext";
+import { defaultUser, useUser } from "../utils/UserContext";
 
 import { Schema } from "../../amplify/data/resource";
 
@@ -21,6 +21,8 @@ const client = generateClient<Schema>({
   authMode: "apiKey",
 });
 export const HighScores: React.FC = () => {
+  const DEFAULT_RECORDS: number = 15;
+
   const [waitingForData, setWaitingForData] = React.useState(false);
   const [lastRefreshed, setLastRefreshed] = React.useState(() => {
     const stored = localStorage.getItem("lastRefreshed");
@@ -33,6 +35,8 @@ export const HighScores: React.FC = () => {
   });
   const { user } = useUser();
   const [t] = useTranslation();
+
+  const [numberOfRecords, setNumberOfRecords] = React.useState(DEFAULT_RECORDS);
 
   const ONE_MINUTE = 1000 * 60;
   const FIVE_MINUTES = ONE_MINUTE * 5;
@@ -81,22 +85,34 @@ export const HighScores: React.FC = () => {
       const { data: highScores } = await client.models.Note.list();
       await Promise.all(
         highScores.map(async (highScore: any) => {
-          const linkToStorageFile = await getUrl({
+          /*const linkToStorageFile = await getUrl({
             path: `profile_pictures/${highScore.name}/profile_pic.jpg`,
-          });
-          highScore.image = linkToStorageFile.url;
+          });*/
+          highScore.image = defaultUser.profilePicture; //linkToStorageFile.url;
           highScore.username = highScore.name ? highScore.name : "Anonymous";
         })
       );
 
-      highScores.sort((a: any, b: any) => b.description - a.description);
+      highScores.sort((a: any, b: any) => {
+        const diff = b.description - a.description;
+        if (diff === 0) {
+          // sort by date if scores are the same
+          const diff2 =
+            new Date(b.updatedAt).getDate() - new Date(a.updatedAt).getDate();
+          if (diff2 === 0) {
+            // sort by time if scores and dates are the same
+            const diff3 =
+              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+            return -diff3;
+          }
+          return -diff2;
+        }
+        return diff;
+      });
 
       setLastRefreshed(Date.now());
 
-      console.log(highScores);
-
-      // set scores to the highest 10
-      setScores(highScores.slice(0, 15));
+      setScores(highScores);
       setCanRefresh(false);
     } catch (e) {
       console.log(e);
@@ -104,6 +120,41 @@ export const HighScores: React.FC = () => {
       setWaitingForData(false);
     }
   }
+
+  // O(n) - yikes!
+  const generateOptions = (arrayLength: number): number[] => {
+    let options = [1];
+
+    for (let i = 5; i < arrayLength; i += 5) {
+      options.push(i);
+    }
+
+    if (!options.includes(arrayLength)) {
+      options.push(arrayLength);
+    } else {
+      options.pop();
+      options.push(arrayLength);
+    }
+
+    return options;
+  };
+
+  interface ProfileImageProps {
+    src: string;
+    fallbackSrc: string;
+    alt: string;
+  }
+
+  const ProfileImage: React.FC<ProfileImageProps> = ({
+    src,
+    fallbackSrc,
+    alt,
+  }) => {
+    const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+      e.currentTarget.src = fallbackSrc;
+    };
+    return <img src={src} alt={alt} onError={handleError} />;
+  };
 
   return (
     <div id="high-scores-component">
@@ -116,6 +167,19 @@ export const HighScores: React.FC = () => {
         </span>
       </div>
       <div id="phase2">
+        <div>
+          <label htmlFor="numberOfRecords">Number of records</label>
+          <select
+            onChange={(e) => setNumberOfRecords(parseInt(e.target.value))}
+            defaultValue={DEFAULT_RECORDS}
+          >
+            {generateOptions(scores.length).map((option: number) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
         {canRefresh && (
           <button onClick={getHighScores} disabled={waitingForData}>
             {!waitingForData && <span>{t("high-scores.refresh")}</span>}
@@ -129,11 +193,12 @@ export const HighScores: React.FC = () => {
             <tr>
               <th>{t("high-scores.user")}</th>
               <th>{t("high-scores.score")}</th>
+              <th>Time</th>
             </tr>
           </thead>
           {!waitingForData && (
             <tbody>
-              {scores.map((score: any) => {
+              {scores.slice(0, numberOfRecords).map((score: any) => {
                 return (
                   <tr
                     className={score.name === user.username ? "user-row" : ""}
@@ -141,11 +206,18 @@ export const HighScores: React.FC = () => {
                   >
                     <td>
                       <div className="user">
-                        <img src={score.image} alt="profile" />
+                        <ProfileImage
+                          src={score.image}
+                          fallbackSrc={defaultUser.profilePicture}
+                          alt="profile"
+                        />
                         <span>{score.username}</span>
                       </div>
                     </td>
                     <td className="score">{score.description || 0}</td>
+                    <td className="date">
+                      {new Date(score.updatedAt).toLocaleString()}
+                    </td>
                   </tr>
                 );
               })}
