@@ -9,7 +9,7 @@ import hurdleImageSrc1 from "../assets/images/hurdle1.png";
 import hurdleImageSrc2 from "../assets/images/hurdle2.png";
 
 import { useTranslation } from "react-i18next";
-import { useUser } from "../utils/UserContext";
+import { defaultUser, useUser } from "../utils/UserContext";
 
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { Amplify } from "aws-amplify";
@@ -50,26 +50,6 @@ export const Game: React.FC = () => {
 
   const { user } = useUser();
   const { t } = useTranslation();
-
-  // // Define function to store the high score in AWS (may not be necessary)
-  // const storeHighScore = async (score: number) => {
-  //   try {
-  //     // Example implementation for posting to AWS
-  //     const response = await fetch("https://aws-endpoint.example.com/highscores", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ score }),
-  //     });
-
-  //     if (!response.ok) {
-  //       console.error("Failed to store high score:", response.statusText);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error storing high score:", error);
-  //   }
-  // };
 
   // Resets all game state variables to their initial values for a new game
   const restartGame = () => {
@@ -170,7 +150,7 @@ export const Game: React.FC = () => {
       const newHighscore = {
         name: email, // Storing email as username
         description: highscore.toString(),
-        image: "true",
+        image: defaultUser.profilePicture,
         username: user.username == "" ? "Anonymous" : user.username,
       };
       console.log(newHighscore);
