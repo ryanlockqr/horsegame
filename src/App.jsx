@@ -23,7 +23,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React from "react";
 import { Game } from "./components/Game";
 import { Header } from "./components/HeaderComponents/Header";
-import { HighScores } from "./components/HighScores";
+import { HighScores } from "./components/highScores";
 import { Profile } from "./components/Profile";
 
 import { Navigate } from "react-router-dom";
