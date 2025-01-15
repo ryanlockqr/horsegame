@@ -172,8 +172,9 @@ export const Game: React.FC = () => {
         name: email, // Storing email as username
         description: highscore,
         image: true,
-        username: user.username === "" ? "Anonymous" : user.username,
-      });
+        username: user.username == "" ? "Anonymous" : user.username,
+      };
+      console.log(newHighscore);
 
       console.log("Highscore stored successfully:", newHighscore);
     } catch (error) {
