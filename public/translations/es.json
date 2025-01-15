@@ -37,6 +37,12 @@
       "score": "Puntuación",
       "date": "Fecha",
       "last-updated": "Última actualización: {{date}}"
+    },
+    "game": {
+      "score": "Puntuación: {{scr}}",
+      "restart": "Reiniciar",
+      "final-score": "Puntuación Final: {{scr}}",
+      "game-over": "Juego Terminado"
     }
   }
   

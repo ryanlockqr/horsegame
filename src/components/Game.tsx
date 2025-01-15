@@ -8,6 +8,21 @@ import horseImageJump from "../assets/images/jumping.png";
 import hurdleImageSrc1 from "../assets/images/hurdle1.png";
 import hurdleImageSrc2 from "../assets/images/hurdle2.png";
 
+import { useTranslation } from "react-i18next";
+import { useUser } from "../utils/UserContext";
+
+import { fetchUserAttributes } from "aws-amplify/auth";
+import { uploadData, getUrl } from "aws-amplify/storage";
+import { Amplify } from "aws-amplify";
+import outputs from "../../amplify_outputs.json";
+import { generateClient } from "aws-amplify/data";
+import { data } from "react-router-dom";
+
+Amplify.configure(outputs);
+const client = generateClient({
+  authMode: "userPool",
+});
+
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 400;
 const HORSE_WIDTH = 65;
@@ -36,6 +51,8 @@ export const Game: React.FC = () => {
   >([]); // list of hurdles on the canvas
   const [gameOver, setGameOver] = useState(false);
 
+  const { user } = useUser();
+  const { t } = useTranslation();
 
   // // Define function to store the high score in AWS (may not be necessary)
   // const storeHighScore = async (score: number) => {
@@ -146,6 +163,39 @@ export const Game: React.FC = () => {
     }, 20);
   };
 
+  async function storeHighscore(highscore: any) {
+    console.log("Storing highscore:", highscore);
+    try {
+      // Fetch current user attributes
+      const userAttributes = await fetchUserAttributes();
+      const email = userAttributes.email; // Access email attribute
+
+      // Fetch profile picture URL from storage
+      const profilePicUrl = await getUrl({
+        path: ({ identityId }) =>
+          `profile_pictures/${identityId}/profile_pic.jpg`,
+      });
+
+      // Store highscore in the database
+      const newHighscore = {
+        name: email, // Storing email as username
+        description: highscore,
+        image: profilePicUrl,
+        username: user.username == "" ? "Anonymous" : user.username,
+      };
+      console.log(newHighscore);
+      const { data: newHighscore2 } = await client.models.Note.create(
+        newHighscore
+      );
+
+      console.log(newHighscore);
+
+      console.log("Highscore stored successfully:", newHighscore);
+    } catch (error) {
+      console.error("Error storing highscore:", error);
+    }
+  }
+
   // Updates score when game is running
   useEffect(() => {
     if (gameOver) return;
@@ -203,10 +253,10 @@ export const Game: React.FC = () => {
           ctx.fillStyle = "black";
           ctx.font = "48px Arial";
           ctx.textAlign = "center";
-          ctx.fillText("Game Over", GAME_WIDTH / 2, GAME_HEIGHT / 2);
+          ctx.fillText(t("game.game-over"), GAME_WIDTH / 2, GAME_HEIGHT / 2);
           ctx.font = "32px Arial";
           ctx.fillText(
-            `Final Score: ${score}`,
+            t("game.final-score", { scr: score }),
             GAME_WIDTH / 2,
             GAME_HEIGHT / 2 + 50
           );
@@ -216,7 +266,11 @@ export const Game: React.FC = () => {
           ctx.fillRect(GAME_WIDTH / 2 - 100, GAME_HEIGHT / 2 + 80, 200, 50);
           ctx.fillStyle = "black";
           ctx.font = "24px Arial";
-          ctx.fillText("Restart", GAME_WIDTH / 2, GAME_HEIGHT / 2 + 115);
+          ctx.fillText(
+            t("game.restart"),
+            GAME_WIDTH / 2,
+            GAME_HEIGHT / 2 + 115
+          );
 
           if (animationFrameRef.current) {
             cancelAnimationFrame(animationFrameRef.current);
@@ -299,11 +353,12 @@ export const Game: React.FC = () => {
         ctx.fillStyle = "black";
         ctx.font = "24px Arial";
         ctx.textAlign = "left"; // Ensure score label position consistency
-        ctx.fillText(`Score: ${score}`, 10, 30);
+        ctx.fillText(t("game.score", { scr: score }), 10, 30);
 
         // Check for collisions
         if (detectColorCollision(ctx)) {
           // storeHighScore(score);
+          storeHighscore(score);
           setGameOver(true);
           return;
         }

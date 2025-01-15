@@ -83,12 +83,15 @@ export const HighScores: React.FC = () => {
             path: `profile_pictures/${highScore.name}/profile_pic.jpg`,
           });
           highScore.image = linkToStorageFile.url;
+          highScore.username = highScore.name ? highScore.name : "Anonymous";
         })
       );
 
       highScores.sort((a: any, b: any) => b.description - a.description);
 
       setLastRefreshed(Date.now());
+
+      console.log(highScores);
 
       // set scores to the highest 10
       setScores(highScores.slice(0, 15));
@@ -136,7 +139,7 @@ export const HighScores: React.FC = () => {
                     <td>
                       <div className="user">
                         <img src={score.image} alt="profile" />
-                        <span>{score.name}</span>
+                        <span>{score.username}</span>
                       </div>
                     </td>
                     <td className="score">{score.description || 0}</td>
