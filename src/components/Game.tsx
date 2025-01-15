@@ -16,7 +16,6 @@ import { uploadData, getUrl } from "aws-amplify/storage";
 import { Amplify } from "aws-amplify";
 import outputs from "../../amplify_outputs.json";
 import { generateClient } from "aws-amplify/data";
-import { data } from "react-router-dom";
 
 Amplify.configure(outputs);
 const client = generateClient({
