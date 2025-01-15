@@ -39,7 +39,7 @@ import "./utils/i18n";
 
 Amplify.configure(outputs);
 const client = generateClient({
-  authMode: "userPool",
+  authMode: "apiKey",
 });
 
 export default function App() {
@@ -55,8 +55,7 @@ export default function App() {
       notes.map(async (note) => {
         if (note.image) {
           const linkToStorageFile = await getUrl({
-            path: ({ identityId }) =>
-              `profile_pictures/${identityId}/profile_pic.jpg`,
+            path: `profile_pictures/${note.name}/profile_pic.jpg`,
           });
           console.log(linkToStorageFile.url);
           note.image = linkToStorageFile.url;
@@ -75,12 +74,13 @@ export default function App() {
       alert("Please select an image file.");
       return;
     }
+    const userAttributes = await fetchUserAttributes();
+    const email = userAttributes.email; // Access email attribute
 
     try {
       // Upload the image to S3
       uploadData({
-        path: ({ identityId }) =>
-          `profile_pictures/${identityId}/profile_pic.jpg`,
+        path: `profile_pictures/${email}/profile_pic.jpg`,
         data: file,
       });
 
@@ -88,6 +88,25 @@ export default function App() {
     } catch (error) {
       console.error("Error uploading profile picture:", error);
       alert("Error uploading profile picture. Please try again.");
+    }
+  }
+
+  async function storeHighscore(highscore) {
+    try {
+      // Fetch current user attributes
+      const userAttributes = await fetchUserAttributes();
+      const email = userAttributes.email; // Access email attribute
+
+      // Store highscore in the database
+      const { data: newHighscore } = await client.models.Note.create({
+        name: email, // Storing email as username
+        description: highscore,
+        image: true,
+      });
+
+      console.log("Highscore stored successfully:", newHighscore);
+    } catch (error) {
+      console.error("Error storing highscore:", error);
     }
   }
 
