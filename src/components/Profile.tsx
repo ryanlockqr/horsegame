@@ -30,7 +30,9 @@ export const Profile: React.FC = () => {
     return (
       <div id="profile-component-guest">
         <img id="profile-picture" src="defaultUser.jpg"></img>
-        <span>{t("profile.user-page-greeting", { name: "Guest" })}</span>
+        <span>
+          {t("profile.user-page-greeting", { name: defaultUser.username })}
+        </span>
         <button>
           <span onClick={() => setUserLoggingIn(true)}>
             {t("common.sign-in")}
@@ -160,10 +162,12 @@ export const Profile: React.FC = () => {
   return (
     <div id="profile-component">
       <div id="sign-out-button">
-        <button onClick={() => {
-                  setUser(defaultUser);
-                  signOut();
-                }}>
+        <button
+          onClick={() => {
+            setUser(defaultUser);
+            signOut();
+          }}
+        >
           {t("common.sign-out")}
         </button>
       </div>
