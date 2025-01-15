@@ -95,7 +95,7 @@ export default function App() {
       const { data: newHighscore } = await client.models.Note.create({
         name: email, // Storing email as username
         description: highscore,
-        image: profilePicUrl,
+        image: true,
       });
 
       console.log("Highscore stored successfully:", newHighscore);
