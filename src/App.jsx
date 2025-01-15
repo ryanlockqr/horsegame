@@ -57,7 +57,6 @@ export default function App() {
           const linkToStorageFile = await getUrl({
             path: `profile_pictures/${note.name}/profile_pic.jpg`,
           });
-          console.log(linkToStorageFile.url);
           note.image = linkToStorageFile.url;
         }
         return note;

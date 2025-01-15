@@ -135,6 +135,7 @@ export const HighScores: React.FC = () => {
                 return (
                   <tr
                     className={score.name === user.username ? "user-row" : ""}
+                    key={score.id}
                   >
                     <td>
                       <div className="user">
