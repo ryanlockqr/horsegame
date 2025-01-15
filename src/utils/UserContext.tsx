@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext } from "react";
 type User = {
   username: string;
   isLoggedIn: boolean;
-  profilePicture?: string;
+  profilePicture: string;
 };
 
 type UserContextType = {
@@ -14,7 +14,7 @@ type UserContextType = {
   setLoggedIn: (status: boolean) => void;
 };
 export const defaultUser: User = {
-  username: "",
+  username: "AnonymousUser" + Math.floor(Math.random() * 1000),
   isLoggedIn: false,
   profilePicture: "defaultUser.jpg",
 };
