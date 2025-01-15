@@ -12,11 +12,9 @@ import { useTranslation } from "react-i18next";
 import { useUser } from "../utils/UserContext";
 
 import { fetchUserAttributes } from "aws-amplify/auth";
-import { uploadData, getUrl } from "aws-amplify/storage";
 import { Amplify } from "aws-amplify";
 import outputs from "../../amplify_outputs.json";
 import { generateClient } from "aws-amplify/data";
-import { data } from "react-router-dom";
 
 Amplify.configure(outputs);
 const client = generateClient({
@@ -163,32 +161,19 @@ export const Game: React.FC = () => {
     }, 20);
   };
 
-  async function storeHighscore(highscore: any) {
-    console.log("Storing highscore:", highscore);
+  async function storeHighscore(highscore: number) {
     try {
       // Fetch current user attributes
       const userAttributes = await fetchUserAttributes();
       const email = userAttributes.email; // Access email attribute
 
-      // Fetch profile picture URL from storage
-      const profilePicUrl = await getUrl({
-        path: ({ identityId }) =>
-          `profile_pictures/${identityId}/profile_pic.jpg`,
-      });
-
       // Store highscore in the database
-      const newHighscore = {
+      const { data: newHighscore } = await client.models.Note.create({
         name: email, // Storing email as username
         description: highscore,
         image: true,
-        username: user.username == "" ? "Anonymous" : user.username,
-      };
-      console.log(newHighscore);
-      const { data: newHighscore2 } = await client.models.Note.create(
-        newHighscore
-      );
-
-      console.log(newHighscore);
+        username: user.username === "" ? "Anonymous" : user.username,
+      });
 
       console.log("Highscore stored successfully:", newHighscore);
     } catch (error) {
