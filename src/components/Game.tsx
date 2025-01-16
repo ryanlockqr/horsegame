@@ -11,14 +11,12 @@ import hurdleImageSrc2 from "../assets/images/hurdle2.png";
 import { useTranslation } from "react-i18next";
 import { defaultUser, useUser } from "../utils/UserContext";
 
-import { fetchUserAttributes } from "aws-amplify/auth";
 import { Amplify } from "aws-amplify";
 import outputs from "../../amplify_outputs.json";
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "../../amplify/data/resource";
 
-Amplify.configure(outputs);
-const client = generateClient<Schema>();
+import { handleHighscoreSubmission } from "../utils/AWScontext";
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 400;
@@ -140,7 +138,7 @@ export const Game: React.FC = () => {
     }, 20);
   };
 
-  async function storeHighscore(highscore: number) {
+  /*async function storeHighscore(highscore: number) {
     try {
       // Fetch current user attributes
       if (!user.email) {
@@ -153,7 +151,7 @@ export const Game: React.FC = () => {
         name: email, // Storing email as username
         description: highscore.toString(),
         image: user.profilePicture || defaultUser.profilePicture,
-        username: user.username == "" ? user.username : defaultUser.email,
+        username: user.username == "" ? user.username : defaultUser.username,
       };
       console.log(newHighscore);
       await client.models.Note.create(newHighscore);
@@ -162,7 +160,7 @@ export const Game: React.FC = () => {
     } catch (error) {
       console.error("Error storing highscore:", error);
     }
-  }
+  }*/
 
   // Updates score when game is running
   useEffect(() => {
@@ -326,7 +324,7 @@ export const Game: React.FC = () => {
         // Check for collisions
         if (detectColorCollision(ctx)) {
           // storeHighScore(score);
-          storeHighscore(score);
+          handleHighscoreSubmission(score, user);
           setGameOver(true);
           return;
         }
