@@ -1,37 +1,42 @@
-import {
-  fetchUserAttributes,
-  FetchUserAttributesOutput,
-} from "@aws-amplify/auth";
+import { FetchUserAttributesOutput } from "@aws-amplify/auth";
 import React, { createContext, useState, useContext } from "react";
-console.log("Fetching user attributes...");
+import { getAmplifyCreds } from "./AWScontext";
 
-const amplifyCredentials: FetchUserAttributesOutput =
-  await fetchUserAttributes();
-
-console.log(amplifyCredentials);
-type User = {
+export type User = {
   username: string;
-  isLoggedIn: boolean;
-  profilePicture: string;
   email: string;
 };
 
+// use if aws fails
 export const defaultUser: User = {
   username: "AnonymousUser" + Math.floor(Math.random() * 1000),
-  isLoggedIn: false,
-  profilePicture: "defaultUser.jpg",
-  email:
-    amplifyCredentials.email_verified && amplifyCredentials.email
-      ? amplifyCredentials.email
-      : "",
+  email: "",
 };
+
+let amplifyUser: User = defaultUser;
+
+try {
+  const amplifyCredentials: FetchUserAttributesOutput = await getAmplifyCreds();
+
+  if (
+    amplifyCredentials &&
+    amplifyCredentials.email_verified &&
+    amplifyCredentials.email
+  ) {
+    amplifyUser = { ...amplifyUser, email: amplifyCredentials.email };
+  }
+
+  if (amplifyCredentials && amplifyCredentials.username) {
+    amplifyUser = { ...amplifyUser, username: amplifyCredentials.username };
+  }
+} catch (e) {
+  console.log(e);
+}
 
 type UserContextType = {
   user: User;
   setUser: (user: User) => void;
   updateUsername: (username: string) => void;
-  updateProfilePicture: (pictureUrl: string) => void;
-  setLoggedIn: (status: boolean) => void;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -42,8 +47,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   // Initialize state with default values
   const [user, setUser] = useState<User>(() => {
     try {
-      const savedUser = localStorage.getItem("user");
-      return savedUser ? JSON.parse(savedUser) : defaultUser;
+      return amplifyUser || defaultUser;
     } catch (e) {
       localStorage.removeItem("user");
       return defaultUser;
@@ -61,22 +65,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     saveUser({ ...user, username });
   };
 
-  const updateProfilePicture = (pictureUrl: string) => {
-    saveUser({ ...user, profilePicture: pictureUrl });
-  };
-
-  const setLoggedIn = (status: boolean) => {
-    saveUser({ ...user, isLoggedIn: status });
-  };
-
   return (
     <UserContext.Provider
       value={{
         user,
         setUser: saveUser,
         updateUsername,
-        updateProfilePicture,
-        setLoggedIn,
       }}
     >
       {children}

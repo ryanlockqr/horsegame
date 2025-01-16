@@ -4,7 +4,11 @@ import outputs from "../../amplify_outputs.json";
 
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "../../amplify/data/resource";
-import { User, defaultUser } from "./UserContext";
+import { type User, defaultUser } from "./UserContext";
+import {
+  fetchUserAttributes,
+  FetchUserAttributesOutput,
+} from "@aws-amplify/auth";
 
 export interface HighscoreSubmissionsRequestObject {
   success: boolean;
@@ -13,6 +17,11 @@ export interface HighscoreSubmissionsRequestObject {
 
 Amplify.configure(outputs);
 const client = generateClient<Schema>();
+
+export async function getAmplifyCreds(): Promise<FetchUserAttributesOutput> {
+  const data: FetchUserAttributesOutput = await fetchUserAttributes();
+  return data;
+}
 
 /**
  * This function will handle the submission of a highscore to the database
@@ -30,13 +39,6 @@ export async function handleHighscoreSubmission(
     return {
       success: false,
       err: "Highscore cannot be negative",
-    };
-  }
-
-  if (!user.isLoggedIn) {
-    return {
-      success: false,
-      err: "User is not logged in",
     };
   }
 
@@ -72,7 +74,6 @@ async function storeHighscore(highscore: number, user: User): Promise<boolean> {
     const payload = {
       name: user.email,
       description: highscore.toString(),
-      image: user.profilePicture || defaultUser.profilePicture,
       username: user.username || defaultUser.username,
     };
 
